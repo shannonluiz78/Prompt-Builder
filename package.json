@@ -1,0 +1,9 @@
+{
+  "name": "prompt-builder",
+  "version": "2.0.0",
+  "description": "Intelligent AI Prompt Studio with Smart Start, Token Saver, and Multi-Provider BYOK Vault",
+  "private": true,
+  "scripts": {
+    "start": "npx serve ."
+  }
+}

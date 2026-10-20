@@ -3,17 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prompt Builder — Intelligent AI Prompt Studio</title>
+  <title>Prompt Builder — Think smarter. Prompt better. Waste less.</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 900: '#1e1b4b' }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #090d16; color: #f3f4f6; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .glass-card { background: rgba(17, 24, 39, 0.82); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
+<body class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
 
-  <!-- LEFT SIDEBAR: Navigation, Studios & Tools -->
-  <aside class="w-full lg:w-72 bg-slate-900/90 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col justify-between shrink-0">
+  <!-- SIDEBAR -->
+  <aside class="w-full lg:w-72 bg-slate-900/95 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col justify-between shrink-0">
     <div class="p-5 space-y-6">
-      <!-- Brand Header -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -22,14 +41,14 @@
           <div>
             <h1 class="font-bold text-lg tracking-tight text-white flex items-center gap-2">
               Prompt Builder
-              <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">v2.1</span>
+              <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">v1.2</span>
             </h1>
             <p id="ui-subtitle" class="text-xs text-slate-400">Intelligent Prompt Studio</p>
           </div>
         </div>
       </div>
 
-      <!-- Language Controls -->
+      <!-- Language Switchers -->
       <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 space-y-2">
         <div class="flex items-center justify-between text-xs">
           <span id="lbl-ui-lang" class="text-slate-400 font-medium">Interface Language</span>
@@ -47,11 +66,11 @@
         </div>
       </div>
 
-      <!-- Studio Switcher -->
+      <!-- Studios Navigation -->
       <div>
         <div id="lbl-studios" class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2.5 px-1">Creation Studios</div>
-        <nav class="space-y-1.5" id="studio-nav">
-          <button onclick="switchStudio('text')" data-studio="text" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition bg-indigo-600/20 text-indigo-300 border border-indigo-500/40">
+        <nav class="space-y-1.5">
+          <button onclick="switchStudio('text')" data-studio="text" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition bg-indigo-600/25 text-indigo-300 border border-indigo-500/50">
             <i data-lucide="file-text" class="w-4 h-4"></i>
             <span class="studio-title" data-key="studio_text">Text Studio</span>
           </button>
@@ -70,60 +89,51 @@
         </nav>
       </div>
 
-      <!-- Quick Tools: Templates Library, BYOK Vault & Problem Detective -->
+      <!-- Quick Tools -->
       <div class="space-y-2 pt-2 border-t border-slate-800/80">
-        <button onclick="toggleModal('templates-modal')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 transition">
+        <button onclick="openTemplatesModal()" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 transition">
           <span class="flex items-center gap-2">
             <i data-lucide="layout-template" class="w-4 h-4 text-indigo-400"></i>
-            <span id="lbl-templates-btn">Starter Templates</span>
+            <span>Starter Templates</span>
           </span>
-          <span class="px-2 py-0.5 rounded-full text-[10px] bg-indigo-500/20 text-indigo-300">Platform Tuned</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] bg-indigo-500/20 text-indigo-300">12 Ready</span>
         </button>
 
-        <button onclick="toggleModal('vault-modal')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium bg-slate-950 hover:bg-slate-800/80 text-slate-300 border border-slate-800 transition">
+        <button onclick="openVaultModal()" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium bg-slate-950 hover:bg-slate-800/80 text-slate-300 border border-slate-800 transition">
           <span class="flex items-center gap-2">
             <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-            <span id="lbl-vault-btn">BYOK API Vault</span>
+            <span id="lbl-vault-btn">AI API Settings</span>
           </span>
           <span id="vault-status-badge" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400">Local Mode</span>
-        </button>
-
-        <button onclick="toggleModal('detective-modal')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition">
-          <span class="flex items-center gap-2">
-            <i data-lucide="search-check" class="w-4 h-4 text-amber-400"></i>
-            <span id="lbl-detective-btn">AI Problem Detective</span>
-          </span>
-          <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
         </button>
       </div>
     </div>
 
-    <!-- Creator Profile Sidebar Variation -->
+    <!-- Creator Card: Luiz Lee -->
     <div class="p-4 m-4 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/90 shadow-inner">
       <div class="flex items-center gap-3 mb-2.5">
         <div class="relative w-11 h-11 rounded-full overflow-hidden border-2 border-indigo-500/60 bg-slate-800 shrink-0 flex items-center justify-center">
-          <img src="AI Smart Casual.png" alt="Creator Profile" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <img src="AI Smart Casual.png" alt="Luiz Lee" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
           <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-bold text-sm">LL</div>
         </div>
         <div>
           <div class="text-xs font-semibold text-white flex items-center gap-1.5">
-            <span id="lbl-creator-badge">Luiz Lee</span>
+            <span>Luiz Lee</span>
             <i data-lucide="badge-check" class="w-3.5 h-3.5 text-indigo-400"></i>
           </div>
-          <button onclick="toggleModal('creator-modal')" class="text-[11px] text-indigo-400 hover:text-indigo-300 underline">
-            <span id="lbl-read-story">Read full mission</span>
-          </button>
+          <span class="text-[11px] text-slate-400">Prompt Architect</span>
         </div>
       </div>
-      <p id="creator-compact-copy" class="text-xs text-slate-300 leading-relaxed italic">
-        "AI should be easier to learn. Prompt Builder helps you ask better questions, avoid wasted tokens and get a stronger start — even if you're completely new to AI."
+      <p class="text-xs text-slate-300 leading-relaxed italic">
+        "Prompt Builder helps you ask better questions, avoid wasted tokens and get a stronger start — even if you're completely new to AI."
       </p>
     </div>
   </aside>
 
   <!-- MAIN WORKSPACE -->
   <main class="flex-1 flex flex-col max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
-    <!-- Smart Start Bar -->
+
+    <!-- SMART START -->
     <section class="rounded-2xl bg-gradient-to-r from-indigo-950/60 via-slate-900 to-purple-950/50 border border-indigo-500/30 p-5 shadow-xl">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
         <div class="flex items-center gap-2">
@@ -131,77 +141,53 @@
             <i data-lucide="zap" class="w-3.5 h-3.5"></i>
             <span id="lbl-smart-start-title">Smart Start (Beginner Friendly)</span>
           </span>
-          <span id="lbl-smart-start-desc" class="text-xs text-slate-400">Describe your rough idea in plain words — we'll pick the right studio, target app & fill the fields.</span>
+          <span id="lbl-smart-start-desc" class="text-xs text-slate-400">Describe your rough idea in plain words — we'll pick the right studio & fill fields.</span>
         </div>
       </div>
       <div class="flex flex-col sm:flex-row gap-3">
-        <input id="smart-start-input" type="text" placeholder="e.g., Animate my kitchen photo in Google Flow with billowing curtains and coffee steam..." class="w-full bg-slate-950/90 border border-slate-700/80 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none" onkeydown="if(event.key==='Enter') runSmartStart()" />
+        <input id="smart-start-input" type="text" placeholder="e.g., Write a script about why buyers shouldn't fear a 5-year wait..." class="w-full bg-slate-950/90 border border-slate-700/80 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none" onkeydown="if(event.key==='Enter') runSmartStart()" />
         <button onclick="runSmartStart()" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition shrink-0">
           <i data-lucide="wand" class="w-4 h-4"></i>
           <span id="lbl-smart-btn">Smart Auto-Fill</span>
         </button>
       </div>
-      <div id="guided-questions-bar" class="hidden mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
-        <span class="text-xs text-indigo-300 font-medium flex items-center gap-1">
-          <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
-          <span id="lbl-guided-q">Quick Clarifications:</span>
-        </span>
-        <div id="guided-questions-list" class="flex flex-wrap gap-1.5"></div>
-      </div>
     </section>
 
-    <!-- Workspace Grid -->
+    <!-- WORKSPACE GRID -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
-      <!-- Studio Parameters Form (7 Cols) -->
+      <!-- FORM PARAMETERS -->
       <div class="lg:col-span-7 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-5">
         <div>
           <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
             <div class="flex items-center gap-2.5">
-              <div id="active-studio-icon" class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+              <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
                 <i data-lucide="sliders" class="w-5 h-5"></i>
               </div>
               <div>
                 <h2 id="active-studio-heading" class="font-bold text-base text-white">Text Studio Parameters</h2>
-                <p id="active-studio-sub" class="text-xs text-slate-400">Structured building blocks</p>
+                <p id="active-studio-sub" class="text-xs text-slate-400">Structured building blocks for clear outputs</p>
               </div>
             </div>
             <button onclick="resetCurrentStudio()" class="text-xs text-slate-400 hover:text-rose-400 flex items-center gap-1 transition">
               <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-              <span id="lbl-reset">Reset</span>
+              <span>Reset</span>
             </button>
           </div>
           <div id="studio-form-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
         </div>
         <div class="pt-3 border-t border-slate-800/80">
-          <div class="text-xs text-slate-400 mb-2 font-medium" id="lbl-quick-boosters">One-Click Quality Boosters:</div>
+          <div class="text-xs text-slate-400 mb-2 font-medium">One-Click Quality Boosters:</div>
           <div id="studio-boosters" class="flex flex-wrap gap-1.5"></div>
         </div>
       </div>
 
-      <!-- Preflight & Compiled Prompt Output (5 Cols) -->
+      <!-- COMPILED PROMPT OUTPUT -->
       <div class="lg:col-span-5 flex flex-col space-y-4">
-        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <i data-lucide="activity" class="w-4 h-4 text-indigo-400"></i>
-              <h3 id="lbl-preflight-title" class="text-xs font-bold uppercase tracking-wider text-slate-300">Preflight Intelligence</h3>
-            </div>
-            <div class="flex items-center gap-2">
-              <span id="quality-score-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Score: 96/100</span>
-              <button onclick="runAutoRepair()" class="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/40 text-xs font-medium flex items-center gap-1 transition">
-                <i data-lucide="wrench" class="w-3 h-3"></i>
-                <span id="lbl-auto-repair">Auto-Repair</span>
-              </button>
-            </div>
-          </div>
-          <ul id="preflight-issues" class="space-y-1.5 text-xs"></ul>
-        </div>
-
         <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 flex-1 flex flex-col justify-between space-y-3">
           <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
             <div class="flex items-center gap-2">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <h3 id="lbl-compiled-title" class="text-xs font-bold uppercase tracking-wider text-slate-300">Platform-Compiled Master Prompt</h3>
+              <h3 id="lbl-compiled-title" class="text-xs font-bold uppercase tracking-wider text-slate-300">Compiled Master Prompt</h3>
             </div>
             <div class="flex items-center gap-2 text-xs">
               <span id="token-counter" class="mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">~0 tokens</span>
@@ -212,223 +198,304 @@
             </div>
           </div>
 
-          <div id="token-saver-banner" class="hidden px-3 py-2 rounded-xl bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-xs flex items-center justify-between">
-            <span id="token-saver-msg">Optimized!</span>
-            <button onclick="undoTokenSaver()" class="underline text-[11px] text-emerald-200 hover:text-white">Undo</button>
-          </div>
+          <textarea id="compiled-prompt-output" rows="12" class="w-full flex-1 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs sm:text-sm text-slate-100 mono leading-relaxed focus:outline-none focus:border-indigo-500 resize-none"></textarea>
 
-          <textarea id="compiled-prompt-output" rows="10" class="w-full flex-1 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs sm:text-sm text-slate-100 mono leading-relaxed focus:outline-none focus:border-indigo-500 resize-none"></textarea>
-
-          <!-- Optimization Goal Selector -->
-          <div class="flex items-center justify-between gap-2 pt-1 text-xs">
-            <label for="optimize-goal-select" class="text-slate-400 font-medium">AI Optimize Goal:</label>
-            <select id="optimize-goal-select" class="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-purple-300 focus:outline-none focus:border-purple-500">
-              <option value="platform_master">🎯 Platform Master (Best for Selected App)</option>
-              <option value="cinematic_detail">🎬 Cinematic & Optical Detail</option>
-              <option value="strict_lock">🔒 Strict Geometry & Structure Lock</option>
-              <option value="token_compact">⚡ Compact High-Density</option>
-            </select>
-          </div>
-
-          <!-- Action Bar -->
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
             <button onclick="copyCompiledPrompt()" class="col-span-1 py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/20 transition">
               <i data-lucide="copy" class="w-3.5 h-3.5"></i>
               <span id="lbl-copy-btn">Copy Prompt</span>
             </button>
-            <button onclick="polishWithBYOK()" class="col-span-1 py-2.5 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+            <button onclick="openVaultModal()" class="col-span-1 py-2.5 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 font-semibold text-xs flex items-center justify-center gap-1.5 transition">
               <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-              <span id="lbl-ai-enhance">Optimize with AI</span>
+              <span>AI Enhance</span>
             </button>
             <button onclick="exportPromptJSON()" class="col-span-2 sm:col-span-1 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs flex items-center justify-center gap-1.5 transition">
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
-              <span id="lbl-export-btn">Export JSON</span>
+              <span>Export JSON</span>
             </button>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Footer Creator Profile -->
-    <footer class="mt-4 rounded-2xl bg-slate-900/80 border border-slate-800 p-5 flex flex-col sm:flex-row items-center gap-5">
-      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-indigo-500/50 bg-slate-800 shrink-0 flex items-center justify-center shadow-lg">
-        <img src="AI Smart Casual.png" alt="Creator Portrait" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-        <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-bold text-xl">LL</div>
-      </div>
-      <div class="space-y-1.5 text-center sm:text-left flex-1">
-        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400" id="lbl-footer-creator-tag">Created by Luiz Lee</span>
-          <span class="text-xs text-slate-500">•</span>
-          <span class="text-xs text-slate-400">Prompt Builder Architecture</span>
-        </div>
-        <p id="creator-main-copy" class="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-4xl">
-          "I created Prompt Builder to help beginners turn rough ideas into clear, effective prompts — without needing technical knowledge. By asking the right questions first, the app aims to reduce trial and error, save unnecessary tokens and help users get better results with confidence."
-        </p>
-      </div>
-    </footer>
   </main>
 
-  <!-- MODAL 1: READY-MADE TEMPLATES LIBRARY -->
-  <div id="templates-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
-        <div class="flex items-center gap-2.5">
-          <div class="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            <i data-lucide="layout-template" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 class="font-bold text-base text-white">Application-Optimized Starter Templates</h3>
-            <p class="text-xs text-slate-400">Pre-configured for Google Flow, Hailuo, Kling, Runway, Nano Banana & Midjourney</p>
-          </div>
-        </div>
-        <button onclick="toggleModal('templates-modal')" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <!-- Category Tabs -->
-      <div class="px-5 pt-3 pb-2 bg-slate-950/30 border-b border-slate-800/80 flex gap-2 overflow-x-auto">
-        <button onclick="filterTemplates('all')" id="btn-cat-all" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition shrink-0">All Templates</button>
-        <button onclick="filterTemplates('i2v')" id="btn-cat-i2v" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">Image-to-Video (Flow / Hailuo / Kling / Runway)</button>
-        <button onclick="filterTemplates('video')" id="btn-cat-video" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">Video Studio</button>
-        <button onclick="filterTemplates('image')" id="btn-cat-image" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">Image (Nano Banana / MJ)</button>
-        <button onclick="filterTemplates('text')" id="btn-cat-text" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">Text Studio</button>
-      </div>
-
-      <!-- Templates Grid Container -->
-      <div id="templates-grid" class="p-5 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 flex-1"></div>
-    </div>
-  </div>
-
-  <!-- MODAL 2: BEFORE VS AFTER AI OPTIMIZE REVIEW -->
-  <div id="optimize-diff-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-        <div class="flex items-center gap-2.5">
-          <i data-lucide="sparkles" class="w-5 h-5 text-purple-400"></i>
-          <div>
-            <h3 class="font-bold text-sm sm:text-base text-white">AI Platform Optimization — Review Before Replacing</h3>
-            <span id="diff-mode-badge" class="text-[11px] text-purple-300">Platform Master Optimization</span>
-          </div>
-        </div>
-        <button onclick="toggleModal('optimize-diff-modal')" class="text-slate-400 hover:text-white p-1.5">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto flex-1">
-        <div class="space-y-1.5 flex flex-col">
-          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Before (Your Current Draft)</label>
-          <textarea id="diff-before-text" rows="12" readonly class="w-full flex-1 bg-slate-950/70 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 mono leading-relaxed resize-none"></textarea>
-        </div>
-        <div class="space-y-1.5 flex flex-col">
-          <label class="text-xs font-bold uppercase tracking-wider text-emerald-400">After (Platform-Optimized Prompt — Editable)</label>
-          <textarea id="diff-after-text" rows="12" class="w-full flex-1 bg-slate-950 border border-emerald-500/40 rounded-xl p-3 text-xs text-emerald-100 mono leading-relaxed focus:outline-none focus:border-emerald-400 resize-none"></textarea>
-        </div>
-      </div>
-
-      <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
-        <span class="text-xs text-slate-400">Your original prompt is never overwritten unless you click Accept.</span>
-        <div class="flex gap-2">
-          <button onclick="toggleModal('optimize-diff-modal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300">Keep Original</button>
-          <button onclick="acceptOptimizedPrompt()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg shadow-emerald-600/20">
-            <i data-lucide="check" class="w-4 h-4"></i>
-            <span>Accept & Replace Prompt</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL 3: AI PROBLEM DETECTIVE -->
-  <div id="detective-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2.5">
-          <i data-lucide="search-check" class="w-5 h-5 text-amber-400"></i>
-          <h3 class="font-bold text-base text-white">AI Problem Detective</h3>
-        </div>
-        <button onclick="toggleModal('detective-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <p class="text-xs text-slate-400">What went wrong with the AI's last output? Click a problem below to inject a targeted fix.</p>
-      <div class="space-y-2">
-        <button onclick="applyDetectiveFix('generic')" class="w-full text-left p-3 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-start justify-between gap-3">
-          <div><div class="text-xs font-semibold text-amber-300">Output is too generic / robotic</div><div class="text-[11px] text-slate-400">Bans cliché AI words and forces real-world examples.</div></div>
-          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
-        </button>
-        <button onclick="applyDetectiveFix('hallucination')" class="w-full text-left p-3 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-start justify-between gap-3">
-          <div><div class="text-xs font-semibold text-amber-300">Making up facts / Hallucinating</div><div class="text-[11px] text-slate-400">Forces the AI to admit when it isn't sure instead of guessing.</div></div>
-          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
-        </button>
-        <button onclick="applyDetectiveFix('visual_artifacts')" class="w-full text-left p-3 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-start justify-between gap-3">
-          <div><div class="text-xs font-semibold text-amber-300">Weird hands, blurry faces, or video morphing</div><div class="text-[11px] text-slate-400">Adds strict positive visual structure locks and optical guards.</div></div>
-          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
-        </button>
-        <button onclick="applyDetectiveFix('format_ignored')" class="w-full text-left p-3 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 transition flex items-start justify-between gap-3">
-          <div><div class="text-xs font-semibold text-amber-300">AI ignored my length or formatting rules</div><div class="text-[11px] text-slate-400">Locks the output layout so the AI follows your structure strictly.</div></div>
-          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL 4: BYOK VAULT -->
+  <!-- MODAL: API SETTINGS & TEST CONNECTION -->
   <div id="vault-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2.5"><i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i><h3 class="font-bold text-base text-white">Multi-Provider BYOK Credential Vault</h3></div>
-        <button onclick="toggleModal('vault-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="font-bold text-base text-white">AI API Settings & Connection Test</h3>
+        <button onclick="closeVaultModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <p class="text-xs text-slate-400">Keys are encrypted locally in your browser using AES-GCM.</p>
       <div class="space-y-3">
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Active AI Provider</label>
-          <select id="vault-provider" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-            <option value="gemini">Google Gemini (gemini-2.5-flash-lite)</option>
-            <option value="openai">OpenAI (gpt-4o-mini)</option>
-            <option value="anthropic">Anthropic Claude (claude-3-5-sonnet)</option>
-            <option value="openrouter">OpenRouter (Auto/Custom)</option>
-            <option value="groq">Groq (llama-3.3-70b-versatile)</option>
-          </select>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Google Gemini API Key</label>
+          <input id="vault-api-key" type="password" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white mono" />
         </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">API Key</label>
-          <input id="vault-api-key" type="password" placeholder="Paste your API key here..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white mono" />
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Vault Passphrase</label>
-          <input id="vault-passphrase" type="password" value="prompt-builder-local-vault" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" />
-        </div>
+        <div id="test-connection-result" class="hidden p-3 rounded-xl text-xs"></div>
       </div>
       <div class="flex items-center justify-between pt-2">
-        <button onclick="clearVaultKeys()" class="text-xs text-rose-400 hover:underline">Purge All Keys</button>
-        <div class="flex gap-2">
-          <button onclick="toggleModal('vault-modal')" class="px-4 py-2 rounded-xl bg-slate-800 text-xs text-slate-300">Close</button>
-          <button onclick="saveEncryptedKey()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white">Encrypt & Save Key</button>
-        </div>
+        <button onclick="testGeminiConnection()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white">Test Connection</button>
+        <button onclick="saveApiKey()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white">Save Key</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL 5: CREATOR MISSION -->
-  <div id="creator-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-center">
-      <div class="w-24 h-24 rounded-2xl overflow-hidden border-2 border-indigo-500 mx-auto bg-slate-800 flex items-center justify-center">
-        <img src="AI Smart Casual.png" alt="Creator" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-        <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-bold text-2xl">LL</div>
+  <!-- MODAL: STARTER TEMPLATES -->
+  <div id="templates-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[80vh] flex flex-col p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-base text-white">Ready-Made Starter Templates</h3>
+        <button onclick="closeTemplatesModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <h3 class="font-bold text-lg text-white">Why I Built Prompt Builder</h3>
-      <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-        "I created Prompt Builder to help beginners turn rough ideas into clear, effective prompts — without needing technical knowledge. By asking the right questions first, the app aims to reduce trial and error, save unnecessary tokens and help users get better results with confidence."
-      </p>
-      <button onclick="toggleModal('creator-modal')" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white">Back to Studio</button>
+      <div class="overflow-y-auto space-y-2 flex-1 pr-1" id="templates-list-container"></div>
     </div>
   </div>
 
-  <!-- Scripts loaded in clean order -->
-  <script src="js/data.js"></script>
-  <script src="js/templates.js"></script>
-  <script src="js/vault.js"></script>
-  <script src="js/app.js"></script>
+  <!-- APPLICATION SCRIPT -->
+  <script>
+    const state = {
+      uiLang: 'en',
+      outLang: 'en',
+      activeStudio: 'text',
+      studios: {
+        text: { role: 'Senior Content Architect', objective: 'Write a high-converting short video script on asset progression.', context: 'First-time homeowners.', tone: 'Authoritative', format: 'Hook -> Body -> CTA', constraints: 'Under 150 words.' },
+        image: { subject: '3D isometric cutaway floorplan of a luxury condo', style: 'Octane Render', lighting: 'Warm golden hour sunlight', camera: '45-degree tilt-shift lens', ratio: '16:9', negative: 'blurry, watermark' },
+        video: { scene: 'Cinematic drone shot over marina bay at dusk', cameraMotion: 'Smooth gimbal forward push-in', pacing: 'Slow-motion', atmosphere: 'Twilight amber glow', audio: 'Ambient breeze', specs: '16:9, 5s' },
+        i2v: { anchor: 'Interior showroom photo', subjectMotion: 'Balcony curtains swaying in breeze', bgMotion: 'Clouds drifting', cameraPath: 'Static tripod', consistency: 'Strict structural lock' }
+      }
+    };
+
+    const schemas = {
+      text: {
+        heading: { en: 'Text Studio Parameters', zh: '文本工坊参数配置' },
+        sub: { en: 'Structured building blocks for LLM precision', zh: '结构化角色、目标与约束' },
+        fields: [
+          { key: 'role', label: { en: 'Expert Role', zh: '专家角色' }, span: 1 },
+          { key: 'tone', label: { en: 'Tone', zh: '语气风格' }, span: 1 },
+          { key: 'objective', label: { en: 'Core Objective', zh: '核心任务' }, span: 2, textarea: true },
+          { key: 'context', label: { en: 'Context', zh: '背景信息' }, span: 2 },
+          { key: 'format', label: { en: 'Format', zh: '输出结构' }, span: 1 },
+          { key: 'constraints', label: { en: 'Constraints', zh: '严格约束' }, span: 1 }
+        ],
+        boosters: [{ label: '+ Step-by-Step', field: 'constraints', val: ' Think step-by-step.' }]
+      },
+      image: {
+        heading: { en: 'Image Studio Parameters', zh: '图像工坊参数配置' },
+        sub: { en: 'Visual composition and lighting', zh: '视觉构图与光影' },
+        fields: [
+          { key: 'subject', label: { en: 'Subject', zh: '核心主体' }, span: 2, textarea: true },
+          { key: 'style', label: { en: 'Style', zh: '渲染风格' }, span: 1 },
+          { key: 'lighting', label: { en: 'Lighting', zh: '光影氛围' }, span: 1 },
+          { key: 'camera', label: { en: 'Camera', zh: '镜头机位' }, span: 1 },
+          { key: 'ratio', label: { en: 'Aspect Ratio', zh: '画面比例' }, span: 1 },
+          { key: 'negative', label: { en: 'Negative Prompt', zh: '反向提示词' }, span: 2 }
+        ],
+        boosters: [{ label: '+ Photorealistic', field: 'camera', val: ', 85mm f/1.4 prime lens' }]
+      },
+      video: {
+        heading: { en: 'Video Studio Parameters', zh: '视频工坊参数配置' },
+        sub: { en: 'Motion trajectory and atmosphere', zh: '运镜轨迹与声画氛围' },
+        fields: [
+          { key: 'scene', label: { en: 'Scene Action', zh: '场景动作' }, span: 2, textarea: true },
+          { key: 'cameraMotion', label: { en: 'Camera Motion', zh: '摄影机运镜' }, span: 1 },
+          { key: 'pacing', label: { en: 'Pacing', zh: '运动节奏' }, span: 1 },
+          { key: 'atmosphere', label: { en: 'Atmosphere', zh: '光影调色' }, span: 1 },
+          { key: 'audio', label: { en: 'Audio Cues', zh: '音效提示' }, span: 1 },
+          { key: 'specs', label: { en: 'Specs', zh: '规格' }, span: 2 }
+        ],
+        boosters: [{ label: '+ FPV Drone', field: 'cameraMotion', val: ', smooth FPV drone glide' }]
+      },
+      i2v: {
+        heading: { en: 'Image-to-Video Studio', zh: '图生视频工坊' },
+        sub: { en: 'Preserve source image while animating vectors', zh: '锁定原图结构并控制动态' },
+        fields: [
+          { key: 'anchor', label: { en: 'Reference Anchor', zh: '参考图锚点' }, span: 2 },
+          { key: 'subjectMotion', label: { en: 'Subject Motion', zh: '主体运动' }, span: 1, textarea: true },
+          { key: 'bgMotion', label: { en: 'Background Motion', zh: '背景微动' }, span: 1, textarea: true },
+          { key: 'cameraPath', label: { en: 'Camera Path', zh: '镜头路径' }, span: 1 },
+          { key: 'consistency', label: { en: 'Consistency Lock', zh: '结构一致性锁定' }, span: 1 }
+        ],
+        boosters: [{ label: '+ Locked Tripod', field: 'consistency', val: ', strict geometry lock' }]
+      }
+    };
+
+    const templates = [
+      { title: 'Property Video Script', studio: 'text', desc: 'High-converting real estate script.' },
+      { title: '3D Isometric Floorplan', studio: 'image', desc: 'Architectural cutaway render.' },
+      { title: 'Cinematic Marina Bay Drone', studio: 'video', desc: 'Twilight aerial glide.' },
+      { title: 'Interior Photo Animator', studio: 'i2v', desc: 'Swaying curtains and coffee steam.' }
+    ];
+
+    function renderStudio() {
+      const sch = schemas[state.activeStudio];
+      const dat = state.studios[state.activeStudio];
+      const lang = state.uiLang;
+
+      document.getElementById('active-studio-heading').textContent = sch.heading[lang];
+      document.getElementById('active-studio-sub').textContent = sch.sub[lang];
+
+      const container = document.getElementById('studio-form-fields');
+      container.innerHTML = '';
+
+      sch.fields.forEach(f => {
+        const wrap = document.createElement('div');
+        wrap.className = f.span === 2 ? 'sm:col-span-2' : 'col-span-1';
+        const lbl = document.createElement('label');
+        lbl.className = 'block text-xs font-semibold text-slate-300 mb-1';
+        lbl.textContent = f.label[lang];
+
+        const input = f.textarea ? document.createElement('textarea') : document.createElement('input');
+        if (f.textarea) input.rows = 2;
+        input.value = dat[f.key] || '';
+        input.className = 'w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none';
+        input.oninput = e => {
+          state.studios[state.activeStudio][f.key] = e.target.value;
+          compilePrompt();
+        };
+
+        wrap.appendChild(lbl);
+        wrap.appendChild(input);
+        container.appendChild(wrap);
+      });
+
+      const boosterBox = document.getElementById('studio-boosters');
+      boosterBox.innerHTML = '';
+      sch.boosters.forEach(b => {
+        const btn = document.createElement('button');
+        btn.className = 'px-2 py-1 rounded bg-slate-950 hover:bg-indigo-950 text-slate-300 border border-slate-800 text-xs';
+        btn.textContent = b.label;
+        btn.onclick = () => {
+          state.studios[state.activeStudio][b.field] += b.val;
+          renderStudio();
+        };
+        boosterBox.appendChild(btn);
+      });
+
+      compilePrompt();
+    }
+
+    function switchStudio(key) {
+      state.activeStudio = key;
+      document.querySelectorAll('.studio-btn').forEach(btn => {
+        if (btn.dataset.studio === key) {
+          btn.className = 'studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition bg-indigo-600/25 text-indigo-300 border border-indigo-500/50';
+        } else {
+          btn.className = 'studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 border border-transparent';
+        }
+      });
+      renderStudio();
+    }
+
+    function compilePrompt() {
+      const s = state.activeStudio;
+      const d = state.studios[s];
+      let res = '';
+      if (s === 'text') {
+        res = `# ROLE\n${d.role}\n\n# OBJECTIVE\n${d.objective}\n\n# CONTEXT\n${d.context}\n\n# TONE\n${d.tone}\n\n# FORMAT\n${d.format}\n\n# CONSTRAINTS\n${d.constraints}`;
+      } else if (s === 'image') {
+        res = `[Subject]: ${d.subject}\n[Style]: ${d.style}\n[Lighting]: ${d.lighting}\n[Camera]: ${d.camera}\n[Aspect Ratio]: --ar ${d.ratio}\n[Negative]: --no ${d.negative}`;
+      } else if (s === 'video') {
+        res = `[Scene]: ${d.scene}\n[Motion]: ${d.cameraMotion}\n[Pacing]: ${d.pacing}\n[Atmosphere]: ${d.atmosphere}\n[Audio]: ${d.audio}\n[Specs]: ${d.specs}`;
+      } else if (s === 'i2v') {
+        res = `[Anchor]: ${d.anchor}\n[Subject Motion]: ${d.subjectMotion}\n[Background Motion]: ${d.bgMotion}\n[Camera Path]: ${d.cameraPath}\n[Consistency]: ${d.consistency}\n\n[Mandatory Guardrail]: Preserve source image strictly. Apply animation vectors only.`;
+      }
+      document.getElementById('compiled-prompt-output').value = res;
+      document.getElementById('token-counter').textContent = `~${Math.round(res.split(/\s+/).length * 1.3)} tokens`;
+    }
+
+    function runSmartStart() {
+      const raw = document.getElementById('smart-start-input').value.trim();
+      if (!raw) return;
+      state.studios[state.activeStudio].objective = raw;
+      state.studios[state.activeStudio].subject = raw;
+      state.studios[state.activeStudio].scene = raw;
+      renderStudio();
+    }
+
+    function runSmartTokenSaver() {
+      const el = document.getElementById('compiled-prompt-output');
+      el.value = el.value.replace(/could you please kindly|i would like you to/gi, '').trim();
+    }
+
+    function copyCompiledPrompt() {
+      navigator.clipboard.writeText(document.getElementById('compiled-prompt-output').value);
+      alert('Prompt copied to clipboard!');
+    }
+
+    function exportPromptJSON() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'prompt-export.json';
+      a.click();
+    }
+
+    function openVaultModal() { document.getElementById('vault-modal').classList.remove('hidden'); }
+    function closeVaultModal() { document.getElementById('vault-modal').classList.add('hidden'); }
+    function saveApiKey() {
+      localStorage.setItem('gemini_key', document.getElementById('vault-api-key').value);
+      document.getElementById('vault-status-badge').textContent = 'GEMINI Ready';
+      document.getElementById('vault-status-badge').className = 'px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+      closeVaultModal();
+    }
+
+    async function testGeminiConnection() {
+      const key = document.getElementById('vault-api-key').value.trim() || localStorage.getItem('gemini_key');
+      const resBox = document.getElementById('test-connection-result');
+      resBox.classList.remove('hidden');
+      if (!key) {
+        resBox.className = 'p-3 rounded-xl text-xs bg-rose-500/20 text-rose-300';
+        resBox.textContent = 'Please enter a Gemini API key first.';
+        return;
+      }
+      resBox.className = 'p-3 rounded-xl text-xs bg-indigo-500/20 text-indigo-300';
+      resBox.textContent = 'Testing connection with Gemini 2.5 Flash...';
+      try {
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+        if (resp.ok) {
+          const data = await resp.json();
+          const count = (data.models || []).length;
+          resBox.className = 'p-3 rounded-xl text-xs bg-emerald-500/20 text-emerald-300';
+          resBox.textContent = `Connected ✓ Verified ${count} accessible Gemini models on your key.`;
+        } else {
+          const err = await resp.json();
+          resBox.className = 'p-3 rounded-xl text-xs bg-rose-500/20 text-rose-300';
+          resBox.textContent = `Connection failed: ${err.error?.message || resp.statusText}`;
+        }
+      } catch (e) {
+        resBox.className = 'p-3 rounded-xl text-xs bg-rose-500/20 text-rose-300';
+        resBox.textContent = `Network error: ${e.message}`;
+      }
+    }
+
+    function openTemplatesModal() {
+      const container = document.getElementById('templates-list-container');
+      container.innerHTML = '';
+      templates.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500 cursor-pointer flex justify-between items-center';
+        item.innerHTML = `<div><div class="font-bold text-xs text-white">${t.title}</div><div class="text-[11px] text-slate-400">${t.desc}</div></div><span class="text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 uppercase">${t.studio}</span>`;
+        item.onclick = () => { switchStudio(t.studio); closeTemplatesModal(); };
+        container.appendChild(item);
+      });
+      document.getElementById('templates-modal').classList.remove('hidden');
+    }
+    function closeTemplatesModal() { document.getElementById('templates-modal').classList.add('hidden'); }
+
+    function setUILang(lang) {
+      state.uiLang = lang;
+      renderStudio();
+    }
+    function setOutLang(lang) { state.outLang = lang; compilePrompt(); }
+    function resetCurrentStudio() {
+      Object.keys(state.studios[state.activeStudio]).forEach(k => state.studios[state.activeStudio][k] = '');
+      renderStudio();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderStudio();
+      lucide.createIcons();
+    });
+  </script>
 </body>
 </html>

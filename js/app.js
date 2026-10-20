@@ -87,7 +87,7 @@ function renderStudio() {
   const container = document.getElementById('studio-form-fields');
   container.innerHTML = '';
 
-  // 1. Target Application Selector Bar (Full 2-Column Span)
+  // 1. Target Application Selector Bar
   const appSelectorWrap = document.createElement('div');
   appSelectorWrap.className = 'sm:col-span-2 p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 space-y-2';
   const optionsHtml = appOptions.map(app =>
@@ -156,7 +156,6 @@ function renderStudio() {
   if (window.lucide) lucide.createIcons();
 }
 
-// Clean up cross-platform jargon when Google Flow or Nano Banana is selected
 function sanitizeForFlow(text) {
   if (!text) return '';
   return text
@@ -173,23 +172,16 @@ function compilePrompt() {
   const targetApp = window.appState.targetApps[studio];
   let compiled = '';
 
-  // ==================== 1. TEXT STUDIO COMPILERS ====================
   if (studio === 'text') {
     if (targetApp === 'claude') {
-      compiled = outLang === 'zh'
-        ? `<role>\n${d.role}\n</role>\n\n<objective>\n${d.objective}\n</objective>\n\n<context>\n${d.context}\n</context>\n\n<tone_and_style>\n${d.tone}\n</tone_and_style>\n\n<output_format>\n${d.format}\n</output_format>\n\n<constraints>\n${d.constraints}\n</constraints>`
-        : `<role>\n${d.role}\n</role>\n\n<objective>\n${d.objective}\n</objective>\n\n<context>\n${d.context}\n</context>\n\n<tone_and_style>\n${d.tone}\n</tone_and_style>\n\n<output_format>\n${d.format}\n</output_format>\n\n<constraints>\n${d.constraints}\n</constraints>`;
+      compiled = `<role>\n${d.role}\n</role>\n\n<objective>\n${d.objective}\n</objective>\n\n<context>\n${d.context}\n</context>\n\n<tone_and_style>\n${d.tone}\n</tone_and_style>\n\n<output_format>\n${d.format}\n</output_format>\n\n<constraints>\n${d.constraints}\n</constraints>`;
     } else {
       compiled = outLang === 'zh'
         ? `# 角色设定\n${d.role}\n\n# 核心任务\n${d.objective}\n\n# 受众与背景\n${d.context}\n\n# 语气与风格\n${d.tone}\n\n# 输出结构\n${d.format}\n\n# 严格边界与限制\n${d.constraints}`
         : `# ROLE & PERSONA\n${d.role}\n\n# CORE OBJECTIVE\n${d.objective}\n\n# AUDIENCE & CONTEXT\n${d.context}\n\n# TONE & VOICE\n${d.tone}\n\n# OUTPUT STRUCTURE\n${d.format}\n\n# STRICT CONSTRAINTS\n${d.constraints}`;
     }
-  }
-
-  // ==================== 2. IMAGE STUDIO COMPILERS ====================
-  else if (studio === 'image') {
+  } else if (studio === 'image') {
     if (targetApp === 'nano_banana') {
-      // Google Nano Banana prefers natural scene prose, explicit composition, and positive quality locks over --no flags
       compiled = outLang === 'zh'
         ? `请生成一张高精度的 ${d.ratio} 画面：${d.subject}。\n\n视觉风格与材质：${d.style}。\n光影与色彩氛围：${d.lighting}。\n机位与镜头光学：${d.camera}。\n画面纯净度约束：保持极高的建筑与几何线条精度，材质纹理真实清晰，严禁出现任何多余的乱码文字、水印或结构扭曲（避免：${d.negative}）。`
         : `Create a high-precision ${d.ratio} aspect ratio image of ${d.subject}.\n\nStyle & Surface Materials: ${d.style}.\nLighting & Atmosphere: ${d.lighting}.\nCamera & Optical Physics: ${d.camera}.\nVisual Integrity: Maintain razor-sharp structural geometry, realistic surface textures, and clean composition with zero watermarks, gibberish text, or visual artifacts (strictly avoid: ${d.negative}).`;
@@ -205,10 +197,7 @@ function compilePrompt() {
         ? `[画面主体]: ${d.subject}\n[艺术风格]: ${d.style}\n[光影氛围]: ${d.lighting}\n[镜头参数]: ${d.camera}\n[画幅比例]: ${d.ratio}\n[反向排除]: ${d.negative}`
         : `[Subject]: ${d.subject}\n[Style & Medium]: ${d.style}\n[Lighting & Color]: ${d.lighting}\n[Camera & Lens]: ${d.camera}\n[Aspect Ratio]: ${d.ratio}\n[Negative / Exclude]: ${d.negative}`;
     }
-  }
-
-  // ==================== 3. VIDEO STUDIO COMPILERS ====================
-  else if (studio === 'video') {
+  } else if (studio === 'video') {
     if (targetApp === 'google_flow') {
       compiled = outLang === 'zh'
         ? `运镜与轴线：${sanitizeForFlow(d.cameraMotion)}。\n场景与主体动作：${d.scene}。\n动态节奏与物理质感：${sanitizeForFlow(d.pacing)}，保持空间透视与物体结构绝对稳定。\n光影与电影调色：${d.atmosphere}（规格：${d.specs}）。\nAudio（原生音效）：${d.audio || '安静自然的室内/环境底噪，无背景音乐，无人声对白'}。`
@@ -229,15 +218,11 @@ function compilePrompt() {
         ? `[场景与动作]: ${d.scene}\n[摄影机运镜]: ${d.cameraMotion}\n[运动节奏]: ${d.pacing}\n[光影调色]: ${d.atmosphere}\n[音效提示]: ${d.audio}\n[视频规格]: ${d.specs}`
         : `[Scene & Action]: ${d.scene}\n[Camera Trajectory]: ${d.cameraMotion}\n[Motion Pacing]: ${d.pacing}\n[Lighting & Grade]: ${d.atmosphere}\n[Audio Cues]: ${d.audio}\n[Specs]: ${d.specs}`;
     }
-  }
-
-  // ==================== 4. IMAGE-TO-VIDEO (I2V) COMPILERS ====================
-  else if (studio === 'i2v') {
+  } else if (studio === 'i2v') {
     const cleanConsistency = sanitizeForFlow(d.consistency);
     const cleanCam = sanitizeForFlow(d.cameraPath);
 
     if (targetApp === 'google_flow') {
-      // Google Flow (Veo 3.1) 6-Layer Clean Visual Prompt — NO chatbot meta-tags or "DO NOT facial features" hallucination traps
       compiled = outLang === 'zh'
         ? `镜头运动：${cleanCam}，保持水平线稳定与零镜头畸变。\n场景与结构锁定：基于首帧参考图的${d.anchor}。${cleanConsistency}，所有墙体、橱柜、大理石台面与家具几何结构在整个镜头中保持完全静止与刚性锁定。\n主体与环境微动态：${d.subjectMotion}；同时${d.bgMotion}。\n光影与节奏：柔和一致的自然光线，表面反射稳定，8秒奢华建筑电影级舒缓节奏。\nAudio：${d.audio || '安静的高端室内环境底噪，微弱轻柔的微风声；无背景音乐，无人声，无突兀音效'}。`
         : `Camera: ${cleanCam}, maintaining a level horizon, fixed focal length, and zero lens distortion.\n\nScene & Structural Lock: ${d.anchor} anchored to the starting frame. ${cleanConsistency}.\n\nSubject & Atmospheric Motion: ${d.subjectMotion}. Meanwhile, ${d.bgMotion}.\n\nLighting & Pacing: Consistent natural daylight with stable surface reflections and restrained, ultra-low displacement pacing over an 8-second continuous take.\n\nAudio: ${d.audio || 'Quiet indoor room tone with a barely audible gentle breeze; no background music, no voices, no sudden sound effects'}.`;
@@ -251,7 +236,6 @@ function compilePrompt() {
         ? `首帧锚点：${d.anchor}。\n前景主体动态：${d.subjectMotion}。\n背景环境动态：${d.bgMotion}。\n摄影机运镜：${cleanCam}。\n结构一致性锁定：${cleanConsistency}（严格保持原图几何透视与材质细节不变）。`
         : `Start Frame Anchor: ${d.anchor}.\nForeground Motion: ${d.subjectMotion}.\nBackground Motion: ${d.bgMotion}.\nCamera Path: ${cleanCam}.\nConsistency Lock: ${cleanConsistency} (strictly preserve source image geometry, layout, and textures).`;
     } else if (targetApp === 'runway') {
-      // Runway Gen-3/Gen-4 I2V rule: Describe ONLY motion and camera path, do not re-describe the static image
       compiled = outLang === 'zh'
         ? `连续镜头运动：${cleanCam}。主体动态：${d.subjectMotion}。环境背景动态：${d.bgMotion}。保持所有静态建筑与背景结构完全锁定不变。`
         : `${cleanCam}. ${d.subjectMotion}. ${d.bgMotion}. All surrounding structural geometry, architecture, and static surfaces remain locked and unchanged.`;
@@ -291,7 +275,6 @@ function runPreflightCheck(text) {
   const issues = [];
   let score = 96;
 
-  // Check 1: Hallucination-inducing negative "DO NOT facial features" in Google Flow
   if ((studio === 'i2v' || studio === 'video') && targetApp === 'google_flow') {
     if (/do not edit|facial features|motion bucket/i.test(text)) {
       issues.push({
@@ -302,7 +285,6 @@ function runPreflightCheck(text) {
     }
   }
 
-  // Check 2: Missing audio cue on Google Flow
   if ((studio === 'i2v' || studio === 'video') && targetApp === 'google_flow' && !/audio:/i.test(text) && !/音效/i.test(text)) {
     issues.push({
       type: 'warn',
@@ -311,7 +293,6 @@ function runPreflightCheck(text) {
     score -= 10;
   }
 
-  // Check 3: Prompt length / specificity
   if (text.length < 80) {
     issues.push({
       type: 'warn',
@@ -347,7 +328,9 @@ function runAutoRepair() {
       d.audio = 'Quiet indoor room tone, faint gentle breeze, no background music, no dialogue';
     }
   } else if (studio === 'video') {
-    d.pacing = sanitizeForFlow(d.pacing) + ', strict temporal permanence, zero morphing';
+    if (!d.pacing.includes('strict temporal permanence')) {
+      d.pacing = (sanitizeForFlow(d.pacing) + ', strict temporal permanence, zero morphing').trim();
+    }
     if (!d.audio) {
       d.audio = 'Quiet natural ambient soundscape, no random voices';
     }
@@ -413,34 +396,102 @@ function applyDetectiveFix(type) {
   toggleModal('detective-modal');
 }
 
+// FIXED SMART START: Intelligent Intent Detection + Complete 6-Field Synthesis (Zero Leftover Demo Text)
 function runSmartStart() {
   const raw = document.getElementById('smart-start-input').value.trim();
   if (!raw) return;
   const lower = raw.toLowerCase();
 
-  if (lower.includes('animate') || lower.includes('photo') || lower.includes('starting frame') || lower.includes('curtain') || lower.includes('i2v')) {
+  // Priority 1: Check if the user is building an Agentic System, Agile/Scrum Workflow, Strategy, Script, or Text Consulting prompt
+  const isTextOrAgentWorkflow =
+    /\b(agentic|agent|agile|scrum|methodology|scope of work|team leader|ask questions|workflow|strategy|script|copywriting|blog|email|plan|consultant|researching|sop|framework)\b/i.test(lower);
+
+  const isI2V =
+    !isTextOrAgentWorkflow &&
+    /\b(animate|starting frame|uploaded photo|reference photo|image to video|photo to video|i2v|billowing|steam rising)\b/i.test(lower);
+
+  const isVideo =
+    !isTextOrAgentWorkflow &&
+    !isI2V &&
+    /\b(drone|footage|slow-motion|cinematic shot|gimbal|camera pan|dolly|b-roll|veo|google flow|hailuo|kling|runway)\b/i.test(lower);
+
+  const isImage =
+    !isTextOrAgentWorkflow &&
+    !isI2V &&
+    !isVideo &&
+    /\b(floorplan|cutaway|isometric|3d render|illustration|portrait photo|poster|infographic|midjourney|nano banana|flux)\b/i.test(lower);
+
+  if (isI2V) {
     switchStudio('i2v');
     if (lower.includes('hailuo')) setTargetApp('hailuo');
     else if (lower.includes('kling')) setTargetApp('kling');
     else if (lower.includes('runway')) setTargetApp('runway');
     else setTargetApp('google_flow');
-    window.appState.studios.i2v.anchor = raw;
-  } else if (lower.includes('drone') || lower.includes('video') || lower.includes('cinematic') || lower.includes('slow-motion') || lower.includes('footage')) {
+
+    window.appState.studios.i2v = {
+      anchor: raw,
+      subjectMotion: 'Subtle, physically accurate foreground micro-motion with natural inertia',
+      bgMotion: 'Gentle, imperceptibly slow atmospheric movement in the background',
+      cameraPath: 'Slow, ultra-steady gimbal dolly push-in along the central axis, fixed focal length, zero lens distortion',
+      consistency: 'All structural geometry, architecture, surfaces, and key subjects remain 100% rigid, stationary, and locked to the starting frame',
+      audio: 'Quiet natural ambient room tone matched to the scene; no background music, no dialogue, no sudden sound effects'
+    };
+  } else if (isVideo) {
     switchStudio('video');
     if (lower.includes('hailuo')) setTargetApp('hailuo');
     else if (lower.includes('kling')) setTargetApp('kling');
     else if (lower.includes('runway')) setTargetApp('runway');
     else setTargetApp('google_flow');
-    window.appState.studios.video.scene = raw;
-  } else if (lower.includes('floorplan') || lower.includes('cutaway') || lower.includes('3d') || lower.includes('image') || lower.includes('poster') || lower.includes('portrait')) {
+
+    window.appState.studios.video = {
+      scene: raw,
+      cameraMotion: 'Smooth stabilized gimbal movement with natural horizon lock and zero focal breathing',
+      pacing: 'Fluid cinematic pacing with realistic physical momentum, strict temporal permanence, zero morphing',
+      atmosphere: 'Natural balanced lighting with realistic surface reflections and cinema-grade color depth',
+      audio: 'Subtle realistic environmental ambience matched to the visual action; no random voices or music',
+      specs: '16:9 widescreen, 8 seconds, 24fps photorealistic cinematography'
+    };
+  } else if (isImage) {
     switchStudio('image');
     if (lower.includes('midjourney')) setTargetApp('midjourney');
     else if (lower.includes('flux')) setTargetApp('flux');
     else setTargetApp('nano_banana');
-    window.appState.studios.image.subject = raw;
+
+    window.appState.studios.image = {
+      subject: raw,
+      style: 'High-precision commercial visual design, physically accurate textures, clean spatial hierarchy',
+      lighting: 'Soft directional natural lighting with balanced shadow falloff and crisp highlights',
+      camera: '50mm f/2.8 rectilinear lens, sharp edge-to-edge optical clarity, 8k resolution',
+      ratio: '16:9',
+      negative: 'blurry text, warped geometry, extra limbs, cluttered background, watermark, visual artifacts'
+    };
   } else {
+    // TEXT / AGENTIC / BUSINESS WORKFLOW STUDIO — Populates all 6 fields cleanly from the user's idea!
     switchStudio('text');
-    window.appState.studios.text.objective = raw;
+    if (lower.includes('claude')) setTargetApp('claude');
+    else if (lower.includes('chatgpt')) setTargetApp('chatgpt');
+    else if (lower.includes('gemini')) setTargetApp('gemini_text');
+    else setTargetApp('universal_text');
+
+    const isAgentic = /\b(agentic|agent|agile|scrum)\b/i.test(lower);
+    const asksQuestions = /\b(ask questions|consolidate|scope)\b/i.test(lower);
+
+    window.appState.studios.text = {
+      role: isAgentic
+        ? 'Principal Agile AI Systems Architect, Scrum Master & Multi-Agent Workflow Lead'
+        : 'Senior Domain Strategy & Execution Architect',
+      objective: raw,
+      context: lower.includes('digital marketing')
+        ? 'Digital marketing leadership context: designing an autonomous multi-agent pipeline covering topic research, content creation, scriptwriting, image/video asset generation, and social media publishing.'
+        : 'Professional operational environment requiring structured planning, clear accountability, and measurable deliverables.',
+      tone: 'Consultative, structured, pragmatic, and execution-focused',
+      format: asksQuestions
+        ? '1. Clarifying Discovery Questions (grouped by Sprint Goals, Agent Roles, Tool Stack & Human-in-the-Loop Approval Gates) -> 2. Proposed Multi-Agent Scrum Topology -> 3. Definition of Done (DoD) & Handoff Schema'
+        : '1. Executive Summary -> 2. Step-by-Step Architecture / Action Plan -> 3. Key Deliverables Table -> 4. Quality & Verification Checklist',
+      constraints: asksQuestions
+        ? 'Do NOT generate the final generic plan prematurely. First ask 5–7 high-impact clarifying questions to consolidate the exact scope of work, approval gates, and tool integrations, then present an initial Agile Sprint 0 blueprint.'
+        : 'Eliminate generic AI fluff; provide concrete workflows, clear role boundaries, and actionable implementation steps.'
+    };
   }
 
   renderStudio();

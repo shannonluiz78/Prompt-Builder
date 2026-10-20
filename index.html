@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prompt Builder — Think smarter. Prompt better. Waste less.</title>
+  <title>Prompt Builder — Intelligent AI Prompt Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
@@ -11,490 +11,1405 @@
       darkMode: 'class',
       theme: {
         extend: {
-          colors: {
-            brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 900: '#1e1b4b' }
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
           }
         }
       }
     };
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #090d16; color: #f3f4f6; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
-    .glass-card { background: rgba(17, 24, 39, 0.82); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .hero-gradient {
+      background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 50%, #ecfeff 100%);
+    }
+    .dark .hero-gradient {
+      background: linear-gradient(135deg, rgba(30, 27, 75, 0.75) 0%, rgba(15, 23, 42, 0.9) 55%, rgba(8, 51, 68, 0.65) 100%);
+    }
+    .card-glow {
+      box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.18);
+    }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #090d16; }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .dark ::-webkit-scrollbar-thumb { background: #1e293b; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
+<body class="bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-slate-100 min-h-screen flex flex-col lg:flex-row overflow-x-hidden transition-colors duration-200">
 
-  <!-- SIDEBAR -->
-  <aside class="w-full lg:w-72 bg-slate-900/95 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col justify-between shrink-0">
-    <div class="p-5 space-y-6">
+  <!-- LEFT SIDEBAR: Navigation, Studios, Tools & Creator Card -->
+  <aside class="w-full lg:w-72 bg-[#0b1021] text-white border-b lg:border-b-0 lg:border-r border-slate-800/90 flex flex-col justify-between shrink-0">
+    <div class="p-5 space-y-5">
+      <!-- Brand Header + Theme Toggle -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
             <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
           </div>
           <div>
-            <h1 class="font-bold text-lg tracking-tight text-white flex items-center gap-2">
+            <h1 class="font-extrabold text-base tracking-tight text-white flex items-center gap-2">
               Prompt Builder
-              <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">v1.2</span>
+              <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-indigo-500/25 text-indigo-300 border border-indigo-400/30">v2.2</span>
             </h1>
-            <p id="ui-subtitle" class="text-xs text-slate-400">Intelligent Prompt Studio</p>
+            <p id="ui-subtitle" class="text-[11px] text-slate-400 font-medium">Intelligent Prompt Studio</p>
           </div>
         </div>
+        <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Switch Light / Dark Theme">
+          <i id="theme-icon" data-lucide="sun" class="w-4 h-4"></i>
+        </button>
       </div>
 
-      <!-- Language Switchers -->
-      <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 space-y-2">
+      <!-- Language Controls -->
+      <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 space-y-2">
         <div class="flex items-center justify-between text-xs">
           <span id="lbl-ui-lang" class="text-slate-400 font-medium">Interface Language</span>
-          <div class="flex rounded-lg bg-slate-900 p-0.5 border border-slate-800">
-            <button onclick="setUILang('en')" id="btn-ui-en" class="px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-600 text-white transition">EN</button>
-            <button onclick="setUILang('zh')" id="btn-ui-zh" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition">简中</button>
+          <div class="flex rounded-xl bg-slate-950 p-0.5 border border-slate-800">
+            <button onclick="setUILang('en')" id="btn-ui-en" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white transition">EN</button>
+            <button onclick="setUILang('zh')" id="btn-ui-zh" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition">简中</button>
           </div>
         </div>
         <div class="flex items-center justify-between text-xs">
           <span id="lbl-out-lang" class="text-slate-400 font-medium">Prompt Output</span>
-          <div class="flex rounded-lg bg-slate-900 p-0.5 border border-slate-800">
-            <button onclick="setOutLang('en')" id="btn-out-en" class="px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-600 text-white transition">EN</button>
-            <button onclick="setOutLang('zh')" id="btn-out-zh" class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-white transition">简中</button>
+          <div class="flex rounded-xl bg-slate-950 p-0.5 border border-slate-800">
+            <button onclick="setOutLang('en')" id="btn-out-en" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white transition">EN</button>
+            <button onclick="setOutLang('zh')" id="btn-out-zh" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition">简中</button>
           </div>
         </div>
       </div>
 
-      <!-- Studios Navigation -->
+      <!-- Creation Studios Navigation -->
       <div>
-        <div id="lbl-studios" class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2.5 px-1">Creation Studios</div>
-        <nav class="space-y-1.5">
-          <button onclick="switchStudio('text')" data-studio="text" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition bg-indigo-600/25 text-indigo-300 border border-indigo-500/50">
+        <div id="lbl-studios" class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 px-1">Creation Studios</div>
+        <nav class="space-y-1.5" id="studio-nav">
+          <button onclick="switchStudio('text')" data-studio="text" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/25">
             <i data-lucide="file-text" class="w-4 h-4"></i>
             <span class="studio-title" data-key="studio_text">Text Studio</span>
           </button>
-          <button onclick="switchStudio('image')" data-studio="image" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 border border-transparent">
+          <button onclick="switchStudio('image')" data-studio="image" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition text-slate-300 hover:bg-slate-800/70">
             <i data-lucide="image" class="w-4 h-4"></i>
             <span class="studio-title" data-key="studio_image">Image Studio</span>
           </button>
-          <button onclick="switchStudio('video')" data-studio="video" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 border border-transparent">
+          <button onclick="switchStudio('video')" data-studio="video" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition text-slate-300 hover:bg-slate-800/70">
             <i data-lucide="film" class="w-4 h-4"></i>
             <span class="studio-title" data-key="studio_video">Video Studio</span>
           </button>
-          <button onclick="switchStudio('i2v')" data-studio="i2v" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 border border-transparent">
+          <button onclick="switchStudio('i2v')" data-studio="i2v" class="studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition text-slate-300 hover:bg-slate-800/70">
             <i data-lucide="wand-2" class="w-4 h-4"></i>
             <span class="studio-title" data-key="studio_i2v">Image-to-Video</span>
           </button>
         </nav>
       </div>
 
-      <!-- Quick Tools -->
-      <div class="space-y-2 pt-2 border-t border-slate-800/80">
-        <button onclick="openTemplatesModal()" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 transition">
+      <!-- Quick Drawers: Templates, BYOK API Vault, Detective -->
+      <div class="space-y-2 pt-2 border-t border-slate-800/90">
+        <button onclick="toggleModal('templates-modal')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-200 border border-indigo-400/25 transition">
           <span class="flex items-center gap-2">
             <i data-lucide="layout-template" class="w-4 h-4 text-indigo-400"></i>
-            <span>Starter Templates</span>
+            <span id="lbl-templates-btn">Starter Templates</span>
           </span>
-          <span class="px-2 py-0.5 rounded-full text-[10px] bg-indigo-500/20 text-indigo-300">12 Ready</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] bg-indigo-500/30 text-indigo-200 font-bold">Platform Tuned</span>
         </button>
 
-        <button onclick="openVaultModal()" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium bg-slate-950 hover:bg-slate-800/80 text-slate-300 border border-slate-800 transition">
+        <button onclick="toggleModal('vault-modal')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition">
           <span class="flex items-center gap-2">
             <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-            <span id="lbl-vault-btn">AI API Settings</span>
+            <span id="lbl-vault-btn">BYOK API Vault</span>
           </span>
           <span id="vault-status-badge" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400">Local Mode</span>
+        </button>
+
+        <button onclick="toggleModal('detective-modal')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-amber-200 border border-amber-400/25 transition">
+          <span class="flex items-center gap-2">
+            <i data-lucide="search-check" class="w-4 h-4 text-amber-400"></i>
+            <span id="lbl-detective-btn">AI Problem Detective</span>
+          </span>
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
         </button>
       </div>
     </div>
 
-    <!-- Creator Card: Luiz Lee -->
-    <div class="p-4 m-4 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/90 shadow-inner">
-      <div class="flex items-center gap-3 mb-2.5">
-        <div class="relative w-11 h-11 rounded-full overflow-hidden border-2 border-indigo-500/60 bg-slate-800 shrink-0 flex items-center justify-center">
+    <!-- Creator Profile Card (Sidebar) -->
+    <div class="p-4 m-4 rounded-2xl bg-gradient-to-br from-indigo-950/90 to-slate-900 border border-indigo-500/30 shadow-lg">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-11 h-11 rounded-xl overflow-hidden border-2 border-indigo-400 shrink-0 bg-slate-800 flex items-center justify-center">
           <img src="AI Smart Casual.png" alt="Luiz Lee" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-bold text-sm">LL</div>
+          <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-bold text-xs">LL</div>
         </div>
         <div>
-          <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-indigo-300">Meet the Creator</div>
+          <div class="text-xs font-bold text-white flex items-center gap-1">
             <span>Luiz Lee</span>
-            <i data-lucide="badge-check" class="w-3.5 h-3.5 text-indigo-400"></i>
+            <i data-lucide="badge-check" class="w-3.5 h-3.5 text-cyan-400"></i>
           </div>
-          <span class="text-[11px] text-slate-400">Prompt Architect</span>
+          <button onclick="toggleModal('creator-modal')" class="text-[10px] text-cyan-300 hover:underline">Read full mission →</button>
         </div>
       </div>
-      <p class="text-xs text-slate-300 leading-relaxed italic">
-        "Prompt Builder helps you ask better questions, avoid wasted tokens and get a stronger start — even if you're completely new to AI."
+      <p id="creator-compact-copy" class="text-[11px] text-slate-300 leading-relaxed italic">
+        "AI should be easier to learn. Prompt Builder helps you ask better questions, avoid wasted tokens and get a stronger start — even if you're completely new to AI."
       </p>
     </div>
   </aside>
 
   <!-- MAIN WORKSPACE -->
-  <main class="flex-1 flex flex-col max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+  <main class="flex-1 flex flex-col max-w-7xl mx-auto w-full p-4 lg:p-7 space-y-5">
 
-    <!-- SMART START -->
-    <section class="rounded-2xl bg-gradient-to-r from-indigo-950/60 via-slate-900 to-purple-950/50 border border-indigo-500/30 p-5 shadow-xl">
+    <!-- Top Workspace Header Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800/90 pb-3.5">
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Workspace • Platform-Aware Prompt Compiler</span>
+        <h2 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          Think smarter. Prompt better. Waste less.
+        </h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleModal('templates-modal')" class="px-3.5 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-300 text-xs font-bold border border-indigo-200 dark:border-indigo-800/80 hover:bg-indigo-100 transition flex items-center gap-1.5">
+          <i data-lucide="layout-template" class="w-3.5 h-3.5"></i>
+          <span>Browse Platform Templates</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 1. SMART START HERO BAR -->
+    <section class="hero-gradient rounded-3xl border border-indigo-200/80 dark:border-indigo-500/30 p-5 card-glow">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
-        <div class="flex items-center gap-2">
-          <span class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 text-xs font-semibold flex items-center gap-1.5 border border-indigo-500/30">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="px-3 py-1 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i data-lucide="zap" class="w-3.5 h-3.5"></i>
             <span id="lbl-smart-start-title">Smart Start (Beginner Friendly)</span>
           </span>
-          <span id="lbl-smart-start-desc" class="text-xs text-slate-400">Describe your rough idea in plain words — we'll pick the right studio & fill fields.</span>
+          <span id="lbl-smart-start-desc" class="text-xs text-slate-600 dark:text-slate-300 font-medium">
+            Describe your rough idea in plain words — we'll pick the right studio, target app & populate all 6 fields.
+          </span>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs flex-wrap">
+          <span class="text-slate-500 dark:text-slate-400 font-semibold text-[11px]">Try:</span>
+          <button onclick="loadSampleIdea('agile')" class="px-2.5 py-1 rounded-full bg-white dark:bg-slate-900 hover:bg-indigo-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold transition text-[11px]">Agile Agent Team</button>
+          <button onclick="loadSampleIdea('i2v')" class="px-2.5 py-1 rounded-full bg-white dark:bg-slate-900 hover:bg-indigo-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold transition text-[11px]">Flow Kitchen I2V</button>
+          <button onclick="loadSampleIdea('image')" class="px-2.5 py-1 rounded-full bg-white dark:bg-slate-900 hover:bg-indigo-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold transition text-[11px]">Nano Banana 3D</button>
+          <button onclick="loadSampleIdea('video')" class="px-2.5 py-1 rounded-full bg-white dark:bg-slate-900 hover:bg-indigo-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold transition text-[11px]">Drone Video</button>
         </div>
       </div>
+
       <div class="flex flex-col sm:flex-row gap-3">
-        <input id="smart-start-input" type="text" placeholder="e.g., Write a script about why buyers shouldn't fear a 5-year wait..." class="w-full bg-slate-950/90 border border-slate-700/80 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none" onkeydown="if(event.key==='Enter') runSmartStart()" />
-        <button onclick="runSmartStart()" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition shrink-0">
+        <input
+          id="smart-start-input"
+          type="text"
+          placeholder="e.g., I want to build an agentic team using agile and scrum methodology. Ask questions to consolidate scope..."
+          class="w-full bg-white dark:bg-slate-950/90 border border-slate-300 dark:border-slate-700/80 focus:border-indigo-500 rounded-2xl px-4 py-3 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none shadow-inner"
+          onkeydown="if(event.key==='Enter') runSmartStart()"
+        />
+        <button
+          onclick="runSmartStart()"
+          class="px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25 transition shrink-0"
+        >
           <i data-lucide="wand" class="w-4 h-4"></i>
           <span id="lbl-smart-btn">Smart Auto-Fill</span>
         </button>
       </div>
     </section>
 
-    <!-- WORKSPACE GRID -->
+    <!-- 2. MAIN WORKSPACE GRID -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
-      <!-- FORM PARAMETERS -->
-      <div class="lg:col-span-7 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-5">
+
+      <!-- Left Column: Studio Parameters (7 Cols) -->
+      <div class="lg:col-span-7 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 flex flex-col justify-between space-y-5 shadow-sm">
         <div>
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-            <div class="flex items-center gap-2.5">
-              <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3.5 mb-4">
+            <div class="flex items-center gap-3">
+              <div class="p-2.5 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
                 <i data-lucide="sliders" class="w-5 h-5"></i>
               </div>
               <div>
-                <h2 id="active-studio-heading" class="font-bold text-base text-white">Text Studio Parameters</h2>
-                <p id="active-studio-sub" class="text-xs text-slate-400">Structured building blocks for clear outputs</p>
+                <h2 id="active-studio-heading" class="font-extrabold text-base text-slate-900 dark:text-white">Text Studio Parameters</h2>
+                <p id="active-studio-sub" class="text-xs text-slate-500 dark:text-slate-400">Structured role, objective, and guardrails for LLM precision</p>
               </div>
             </div>
-            <button onclick="resetCurrentStudio()" class="text-xs text-slate-400 hover:text-rose-400 flex items-center gap-1 transition">
+            <button onclick="resetCurrentStudio()" class="text-xs font-semibold text-slate-400 hover:text-rose-500 flex items-center gap-1 transition">
               <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-              <span>Reset</span>
+              <span id="lbl-reset">Reset</span>
             </button>
           </div>
+
+          <!-- Dynamic Target App Banner + Studio Fields -->
           <div id="studio-form-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
         </div>
-        <div class="pt-3 border-t border-slate-800/80">
-          <div class="text-xs text-slate-400 mb-2 font-medium">One-Click Quality Boosters:</div>
+
+        <!-- One-Click Quality Boosters -->
+        <div class="pt-3.5 border-t border-slate-100 dark:border-slate-800">
+          <div class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-2" id="lbl-quick-boosters">One-Click Quality Boosters:</div>
           <div id="studio-boosters" class="flex flex-wrap gap-1.5"></div>
         </div>
       </div>
 
-      <!-- COMPILED PROMPT OUTPUT -->
+      <!-- Right Column: Preflight Intelligence + Compiled Prompt Output (5 Cols) -->
       <div class="lg:col-span-5 flex flex-col space-y-4">
-        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 flex-1 flex flex-col justify-between space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+
+        <!-- Preflight Intelligence Card -->
+        <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 space-y-3 shadow-sm">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <h3 id="lbl-compiled-title" class="text-xs font-bold uppercase tracking-wider text-slate-300">Compiled Master Prompt</h3>
+              <i data-lucide="activity" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+              <h3 id="lbl-preflight-title" class="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">Preflight Intelligence</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="quality-score-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Score: 98/100</span>
+              <button onclick="runAutoRepair()" class="px-2.5 py-1 rounded-xl bg-indigo-500/15 hover:bg-indigo-600 text-indigo-600 dark:text-indigo-300 hover:text-white border border-indigo-500/30 text-xs font-bold flex items-center gap-1 transition">
+                <i data-lucide="wrench" class="w-3 h-3"></i>
+                <span id="lbl-auto-repair">Auto-Repair</span>
+              </button>
+            </div>
+          </div>
+          <ul id="preflight-issues" class="space-y-1.5 text-xs"></ul>
+        </div>
+
+        <!-- Compiled Master Prompt Card -->
+        <div class="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 flex-1 flex flex-col justify-between space-y-3 shadow-sm">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <h3 id="lbl-compiled-title" class="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">Platform-Compiled Master Prompt</h3>
             </div>
             <div class="flex items-center gap-2 text-xs">
-              <span id="token-counter" class="mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">~0 tokens</span>
-              <button onclick="runSmartTokenSaver()" class="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-medium flex items-center gap-1 transition">
+              <span id="token-counter" class="mono font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-950 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-800">~0 tokens</span>
+              <button onclick="runSmartTokenSaver()" class="px-2.5 py-1 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-bold flex items-center gap-1 transition">
                 <i data-lucide="scissors" class="w-3 h-3"></i>
                 <span id="lbl-token-saver">Token Saver</span>
               </button>
             </div>
           </div>
 
-          <textarea id="compiled-prompt-output" rows="12" class="w-full flex-1 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs sm:text-sm text-slate-100 mono leading-relaxed focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+          <div id="token-saver-banner" class="hidden px-3 py-2 rounded-xl bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-xs flex items-center justify-between">
+            <span id="token-saver-msg">Optimized!</span>
+            <button onclick="undoTokenSaver()" class="underline text-[11px] text-emerald-200 hover:text-white">Undo</button>
+          </div>
 
+          <textarea
+            id="compiled-prompt-output"
+            rows="12"
+            class="w-full flex-1 bg-slate-50 dark:bg-slate-950/95 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 mono leading-relaxed focus:outline-none focus:border-indigo-500 resize-none"
+          ></textarea>
+
+          <!-- AI Optimize Goal Selector -->
+          <div class="flex items-center justify-between gap-2 pt-1 text-xs">
+            <label for="optimize-goal-select" class="text-slate-500 dark:text-slate-400 font-bold">AI Optimize Goal:</label>
+            <select id="optimize-goal-select" class="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-indigo-600 dark:text-purple-300 focus:outline-none">
+              <option value="platform_master">🎯 Platform Master (Context-First / App Native)</option>
+              <option value="cinematic_detail">🎬 Deep Architectural & Sensory Detail</option>
+              <option value="strict_lock">🔒 Strict Guardrails & Geometry Lock</option>
+              <option value="token_compact">⚡ Compact High-Signal</option>
+            </select>
+          </div>
+
+          <!-- Action Buttons -->
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
-            <button onclick="copyCompiledPrompt()" class="col-span-1 py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/20 transition">
+            <button onclick="copyCompiledPrompt()" class="col-span-1 py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/20 transition">
               <i data-lucide="copy" class="w-3.5 h-3.5"></i>
               <span id="lbl-copy-btn">Copy Prompt</span>
             </button>
-            <button onclick="openVaultModal()" class="col-span-1 py-2.5 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+            <button onclick="polishWithBYOK()" class="col-span-1 py-2.5 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-700 dark:text-purple-300 border border-purple-500/30 font-bold text-xs flex items-center justify-center gap-1.5 transition">
               <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-              <span>AI Enhance</span>
+              <span id="lbl-ai-enhance">Optimize with AI</span>
             </button>
-            <button onclick="exportPromptJSON()" class="col-span-2 sm:col-span-1 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs flex items-center justify-center gap-1.5 transition">
+            <button onclick="exportPromptJSON()" class="col-span-2 sm:col-span-1 py-2.5 px-3 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center gap-1.5 transition">
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
-              <span>Export JSON</span>
+              <span id="lbl-export-btn">Export JSON</span>
             </button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- 3. FOOTER CREATOR PROFILE -->
+    <footer class="rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 p-5 flex flex-col sm:flex-row items-center gap-5 shadow-sm">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-indigo-500/60 bg-slate-800 shrink-0 flex items-center justify-center shadow-lg">
+        <img src="AI Smart Casual.png" alt="Luiz Lee" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-bold text-xl">LL</div>
+      </div>
+      <div class="space-y-1.5 text-center sm:text-left flex-1">
+        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Created by Luiz Lee</span>
+          <span class="text-xs text-slate-400">•</span>
+          <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Prompt Builder Architecture</span>
+        </div>
+        <p id="creator-main-copy" class="text-xs sm:text-sm text-slate-600 dark:text-slate-200 leading-relaxed max-w-4xl">
+          "I created Prompt Builder to help beginners turn rough ideas into clear, effective prompts — without needing technical knowledge. By asking the right questions first, the app aims to reduce trial and error, save unnecessary tokens and help users get better results with confidence."
+        </p>
+      </div>
+    </footer>
   </main>
 
-  <!-- MODAL: API SETTINGS & TEST CONNECTION -->
-  <div id="vault-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-base text-white">AI API Settings & Connection Test</h3>
-        <button onclick="closeVaultModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+  <!-- MODAL 1: PLATFORM-TUNED STARTER TEMPLATES -->
+  <div id="templates-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/50">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+            <i data-lucide="layout-template" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900 dark:text-white">Application-Optimized Starter Templates</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Pre-configured for Google Flow, Hailuo, Kling, Runway, Nano Banana, Midjourney & Context-First LLMs</p>
+          </div>
+        </div>
+        <button onclick="toggleModal('templates-modal')" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
+
+      <div class="px-5 pt-3 pb-2 bg-slate-100/70 dark:bg-slate-950/30 border-b border-slate-200 dark:border-slate-800/80 flex gap-2 overflow-x-auto">
+        <button onclick="filterTemplates('all')" id="btn-cat-all" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition shrink-0">All Templates</button>
+        <button onclick="filterTemplates('text')" id="btn-cat-text" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">Text & Agentic Squads</button>
+        <button onclick="filterTemplates('i2v')" id="btn-cat-i2v" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">Image-to-Video (Flow / Hailuo / Kling / Runway)</button>
+        <button onclick="filterTemplates('video')" id="btn-cat-video" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">Video Studio</button>
+        <button onclick="filterTemplates('image')" id="btn-cat-image" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">Image (Nano Banana / MJ)</button>
+      </div>
+
+      <div id="templates-grid" class="p-5 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 flex-1"></div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: BEFORE VS AFTER AI OPTIMIZE REVIEW -->
+  <div id="optimize-diff-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-4xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/60">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="sparkles" class="w-5 h-5 text-purple-500"></i>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">AI Platform Optimization — Review Before Replacing</h3>
+            <span id="diff-mode-badge" class="text-[11px] font-semibold text-purple-600 dark:text-purple-300">Platform Master Optimization</span>
+          </div>
+        </div>
+        <button onclick="toggleModal('optimize-diff-modal')" class="text-slate-400 hover:text-white p-1.5">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto flex-1">
+        <div class="space-y-1.5 flex flex-col">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Before (Your Current Draft)</label>
+          <textarea id="diff-before-text" rows="13" readonly class="w-full flex-1 bg-slate-100 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-xs text-slate-500 dark:text-slate-400 mono leading-relaxed resize-none"></textarea>
+        </div>
+        <div class="space-y-1.5 flex flex-col">
+          <label class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">After (Platform-Optimized Prompt — Editable)</label>
+          <textarea id="diff-after-text" rows="13" class="w-full flex-1 bg-white dark:bg-slate-950 border border-emerald-500/50 rounded-2xl p-3.5 text-xs text-slate-900 dark:text-emerald-100 mono leading-relaxed focus:outline-none focus:border-emerald-400 resize-none"></textarea>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 flex items-center justify-between">
+        <span class="text-xs text-slate-500 dark:text-slate-400">Your original prompt is never overwritten unless you click Accept.</span>
+        <div class="flex gap-2">
+          <button onclick="toggleModal('optimize-diff-modal')" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300">Keep Original</button>
+          <button onclick="acceptOptimizedPrompt()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg shadow-emerald-600/20">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Accept & Replace Prompt</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: BYOK API VAULT + LIVE TEST CONNECTION -->
+  <div id="vault-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="shield-check" class="w-5 h-5 text-emerald-500"></i>
+          <h3 class="font-bold text-base text-slate-900 dark:text-white">BYOK API Vault & Live Connection Test</h3>
+        </div>
+        <button onclick="toggleModal('vault-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400">
+        Paste your key from <a href="https://aistudio.google.com/api-keys" target="_blank" class="text-indigo-500 underline font-semibold">Google AI Studio</a>. Stored locally in your browser so it works across GitHub Pages & Vercel.
+      </p>
       <div class="space-y-3">
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Google Gemini API Key</label>
-          <input id="vault-api-key" type="password" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white mono" />
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Active AI Provider</label>
+          <select id="vault-provider" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-900 dark:text-white">
+            <option value="gemini">Google Gemini (Auto-Discovers Active Flash / Lite Models)</option>
+          </select>
         </div>
-        <div id="test-connection-result" class="hidden p-3 rounded-xl text-xs"></div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">API Key</label>
+          <input id="vault-api-key" type="password" placeholder="Paste your Gemini API key (AIzaSy...)" class="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-white mono" />
+        </div>
+        <div id="vault-test-status" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
       </div>
       <div class="flex items-center justify-between pt-2">
-        <button onclick="testGeminiConnection()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white">Test Connection</button>
-        <button onclick="saveApiKey()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white">Save Key</button>
+        <button onclick="clearVaultKeys()" class="text-xs font-semibold text-rose-500 hover:underline">Purge Key</button>
+        <div class="flex gap-2">
+          <button onclick="testVaultConnection()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white">+ Test Connection</button>
+          <button onclick="saveEncryptedKey()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white">Save Key</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: STARTER TEMPLATES -->
-  <div id="templates-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[80vh] flex flex-col p-6 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-base text-white">Ready-Made Starter Templates</h3>
-        <button onclick="closeTemplatesModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+  <!-- MODAL 4: AI PROBLEM DETECTIVE -->
+  <div id="detective-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="search-check" class="w-5 h-5 text-amber-500"></i>
+          <h3 class="font-bold text-base text-slate-900 dark:text-white">AI Problem Detective</h3>
+        </div>
+        <button onclick="toggleModal('detective-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <div class="overflow-y-auto space-y-2 flex-1 pr-1" id="templates-list-container"></div>
+      <p class="text-xs text-slate-500 dark:text-slate-400">What went wrong with the AI's last output? Click a symptom to inject a targeted guardrail.</p>
+      <div class="space-y-2">
+        <button onclick="applyDetectiveFix('generic')" class="w-full text-left p-3 rounded-xl bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition flex items-start justify-between gap-3">
+          <div><div class="text-xs font-bold text-amber-600 dark:text-amber-300">Output is too generic / robotic</div><div class="text-[11px] text-slate-500 dark:text-slate-400">Bans cliché AI filler words and forces concrete mechanisms.</div></div>
+          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></i>
+        </button>
+        <button onclick="applyDetectiveFix('hallucination')" class="w-full text-left p-3 rounded-xl bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition flex items-start justify-between gap-3">
+          <div><div class="text-xs font-bold text-amber-600 dark:text-amber-300">Making up facts / Hallucinating</div><div class="text-[11px] text-slate-500 dark:text-slate-400">Forces the AI to verify facts or ask clarifying questions first.</div></div>
+          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></i>
+        </button>
+        <button onclick="applyDetectiveFix('visual_artifacts')" class="w-full text-left p-3 rounded-xl bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition flex items-start justify-between gap-3">
+          <div><div class="text-xs font-bold text-amber-600 dark:text-amber-300">Walls warping or video morphing</div><div class="text-[11px] text-slate-500 dark:text-slate-400">Adds positive structural geometry locks and fixed focal length.</div></div>
+          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></i>
+        </button>
+        <button onclick="applyDetectiveFix('format_ignored')" class="w-full text-left p-3 rounded-xl bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition flex items-start justify-between gap-3">
+          <div><div class="text-xs font-bold text-amber-600 dark:text-amber-300">AI ignored my length or formatting rules</div><div class="text-[11px] text-slate-500 dark:text-slate-400">Enforces strict output schema compliance with zero intro fluff.</div></div>
+          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></i>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- APPLICATION SCRIPT -->
+  <!-- MODAL 5: CREATOR MISSION -->
+  <div id="creator-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl text-center">
+      <div class="w-24 h-24 rounded-2xl overflow-hidden border-2 border-indigo-500 mx-auto bg-slate-800 flex items-center justify-center">
+        <img src="AI Smart Casual.png" alt="Luiz Lee" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-bold text-2xl">LL</div>
+      </div>
+      <h3 class="font-bold text-lg text-slate-900 dark:text-white">Why I Built Prompt Builder — Luiz Lee</h3>
+      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+        "I created Prompt Builder to help beginners turn rough ideas into clear, effective prompts — without needing technical knowledge. By asking the right questions first, the app aims to reduce trial and error, save unnecessary tokens and help users get better results with confidence."
+      </p>
+      <button onclick="toggleModal('creator-modal')" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white">Back to Studio</button>
+    </div>
+  </div>
+
+  <!-- EMBEDDED MASTER APPLICATION SCRIPT -->
   <script>
-    const state = {
+    window.appState = {
       uiLang: 'en',
       outLang: 'en',
       activeStudio: 'text',
+      previousPromptBackup: null,
+      pendingOptimizedPrompt: null,
+      detectiveFixes: [],
+      targetApps: {
+        text: 'gemini_text',
+        image: 'nano_banana',
+        video: 'google_flow',
+        i2v: 'google_flow'
+      },
       studios: {
-        text: { role: 'Senior Content Architect', objective: 'Write a high-converting short video script on asset progression.', context: 'First-time homeowners.', tone: 'Authoritative', format: 'Hook -> Body -> CTA', constraints: 'Under 150 words.' },
-        image: { subject: '3D isometric cutaway floorplan of a luxury condo', style: 'Octane Render', lighting: 'Warm golden hour sunlight', camera: '45-degree tilt-shift lens', ratio: '16:9', negative: 'blurry, watermark' },
-        video: { scene: 'Cinematic drone shot over marina bay at dusk', cameraMotion: 'Smooth gimbal forward push-in', pacing: 'Slow-motion', atmosphere: 'Twilight amber glow', audio: 'Ambient breeze', specs: '16:9, 5s' },
-        i2v: { anchor: 'Interior showroom photo', subjectMotion: 'Balcony curtains swaying in breeze', bgMotion: 'Clouds drifting', cameraPath: 'Static tripod', consistency: 'Strict structural lock' }
+        text: {
+          role: 'Principal Agile AI Systems Architect, Scrum Master & Multi-Agent Workflow Lead',
+          context: 'You are advising a Team Leader at a digital marketing agency who is transitioning an end-to-end social media production pipeline into an autonomous Agile/Scrum Multi-Agent system. The target pipeline covers five core functions:\n1. Topic & Trend Research Agent (market intelligence, viral hooks, competitor analysis)\n2. Content Strategy & Copywriting Agent (campaign angles, captions, value propositions)\n3. Scriptwriting Agent (retention-optimized short/long-form video scripts)\n4. Visual & Video Asset Agent (image prompts for Nano Banana/Midjourney and video prompts for Google Flow/Hailuo/Kling)\n5. QA & Social Publishing Agent (brand compliance check, scheduling, analytics feedback loop)',
+          objective: 'Consolidate the exact operational scope, tool stack, and human-in-the-loop (HITL) governance required to build and deploy this Agile Agentic Marketing Squad.',
+          tone: 'Consultative, structured, pragmatic, and execution-focused',
+          format: 'Follow this strict two-part response structure:\n1. Part 1: High-Leverage Discovery Questions (5–7 Questions)\n   Group your questions under:\n   - A. Channels, Content Volume & Brand Guardrails\n   - B. Agent Autonomy vs. Human Approval Gates\n   - C. Current Tool Stack & API Integrations\n2. Part 2: Initial Sprint 0 Multi-Agent Topology (Markdown Table)\n   Provide a proposed baseline table with columns: Agent Role | Scrum Responsibility | Input Artifact | Output Deliverable | Human Approval Gate.',
+          constraints: '- Lead directly with Part 1 (no conversational filler).\n- Do NOT write generic marketing scripts or final campaign assets yet.\n- Pause at the end of Part 2 and wait for the Team Leader\'s answers before finalizing the Sprint 1 Backlog.'
+        },
+        image: {
+          subject: '3D isometric architectural cutaway floorplan of a modern luxury 3-bedroom condominium unit with warm oak flooring and marble kitchen island',
+          style: 'High-precision architectural visualization, miniature diorama aesthetic, physically based rendering (PBR) materials',
+          lighting: 'Warm golden hour sunlight streaming diagonally through floor-to-ceiling balcony glass, soft natural shadow falloff',
+          camera: 'True 45-degree isometric tilt-shift lens, f/8 edge-to-edge sharpness, 8k detail',
+          ratio: '16:9',
+          negative: 'blurry text, warped walls, non-parallel lines, cluttered furniture, oversaturated neon, watermark'
+        },
+        video: {
+          scene: 'Aerial drone shot gliding smoothly past lush vertical sky gardens toward a cantilevered infinity pool overlooking the Singapore city skyline at dusk',
+          cameraMotion: 'Smooth stabilized gimbal forward push-in with a gradual upward tilt reveal, fixed 24mm wide cinema lens, zero horizon roll',
+          pacing: 'Fluid, unhurried luxury real estate pacing over an 8-second continuous take with realistic water physics',
+          atmosphere: 'Warm twilight amber interior glow contrasting with deep sapphire evening sky',
+          audio: 'Subtle high-altitude evening breeze, gentle infinity pool water ripples, warm minimalist ambient soundscape, no voices',
+          specs: '16:9 widescreen, 8 seconds, 24fps photorealistic architectural cinematography'
+        },
+        i2v: {
+          anchor: 'High-resolution interior photo of an open-concept luxury marble kitchen and living area',
+          subjectMotion: 'Sheer white floor-to-ceiling balcony curtains billow gently inward with realistic fabric physics in a light breeze; delicate wisps of steam rise slowly from the coffee cup on the marble island',
+          bgMotion: 'Soft clouds drift imperceptibly across the distant city skyline outside the glass windows',
+          cameraPath: 'Slow, ultra-steady gimbal dolly push-in moving smoothly forward along the central axis of the marble kitchen island, level horizon, zero lens distortion',
+          consistency: 'All architectural geometry, walls, cabinetry, marble waterfall countertops, island edges, and furniture remain completely stationary, rigid, and structurally unchanged from the starting frame',
+          audio: 'Quiet luxury indoor room tone with a barely audible gentle breeze near the balcony; no background music, no voices, no sudden sound effects'
+        }
       }
     };
 
-    const schemas = {
+    window.targetAppCatalog = {
+      text: [
+        { id: 'gemini_text', name: 'Google Gemini', badge: 'Context-First Executive', tip: { en: 'Places Operational Context & Domain Scope clearly before the Core Mission Objective and Execution Protocol.', zh: '优先铺垫运营背景与领域范围，随后给出核心任务目标与执行协议。' } },
+        { id: 'universal_text', name: 'Universal (All LLMs)', badge: 'Context-First Markdown', tip: { en: 'Executive Context-First Markdown schema compatible with ChatGPT, Claude, Gemini, and DeepSeek.', zh: '通用高管级结构化提示词，兼容所有主流大模型。' } },
+        { id: 'claude', name: 'Anthropic Claude', badge: 'XML + Context-First', tip: { en: 'Wraps your Context-First executive architecture in semantic XML tags preferred by Claude.', zh: '使用 Claude 偏好的语义化 XML 标签包裹上下文优先结构。' } },
+        { id: 'chatgpt', name: 'OpenAI ChatGPT', badge: 'System Directives', tip: { en: 'Structured system-style Markdown headings for high compliance in GPT-4o / o3.', zh: '针对 ChatGPT 优化的系统级指令标题结构。' } }
+      ],
+      image: [
+        { id: 'nano_banana', name: 'Google Nano Banana', badge: 'Natural Scene Prose', tip: { en: 'Uses natural descriptive prose, spatial hierarchy, and positive purity locks instead of "--no" flags.', zh: '采用自然描述性语句、清晰空间层次与正向画质约束。' } },
+        { id: 'midjourney', name: 'Midjourney (v6.1 / v7)', badge: 'Parameter Syntax', tip: { en: 'Compiles high-density visual descriptors followed by native --ar, --stylize, and --no parameters.', zh: '编译高密度视觉描述词，并在末尾附加 --ar、--stylize 与 --no 参数。' } },
+        { id: 'flux', name: 'FLUX.1 / Recraft', badge: 'Optical & Text Precision', tip: { en: 'Detailed photographic prose with explicit lens physics and spatial layout.', zh: '摄影级自然语言描述与明确的光圈镜头物理参数。' } },
+        { id: 'universal_image', name: 'Universal Image Generator', badge: 'Balanced Visual', tip: { en: 'Clean structured visual prompt compatible with all image generators.', zh: '适用于所有主流 AI 绘画工具的通用结构。' } }
+      ],
+      video: [
+        { id: 'google_flow', name: 'Google Flow (Veo 3.1)', badge: '6-Layer Cinematic + Audio', tip: { en: 'Flow Setup: Select Text-to-Video, 16:9 or 9:16, 8s duration. Includes explicit Audio restraint cues for Veo 3.1.', zh: 'Google Flow 设置：选择文生视频，8秒时长，已自动包含原生音效控制。' } },
+        { id: 'hailuo', name: 'Hailuo AI (MiniMax)', badge: '[Bracket Camera] + Physics', tip: { en: 'Uses bracketed camera commands like [Push in] and fluid action beats.', zh: '采用方括号运镜指令（如 [Push in]）与流体物理动态描述。' } },
+        { id: 'kling', name: 'Kling AI (1.6 / 2.0)', badge: 'Chronological Trajectory', tip: { en: 'Structured as Subject -> Movement Trajectory -> Environment -> Optical Specs.', zh: '按主体 -> 运动轨迹 -> 环境物理 -> 镜头参数顺序组织。' } },
+        { id: 'runway', name: 'Runway (Gen-3 / Gen-4)', badge: 'Camera-First Prose', tip: { en: 'Leads with continuous camera movement terminology followed by single-scene motion.', zh: '以连续镜头运动开篇，紧接单一场景主体动态。' } }
+      ],
+      i2v: [
+        { id: 'google_flow', name: 'Google Flow (Veo 3.1 I2V)', badge: 'Starting Frame Lock + Audio', tip: { en: 'IMPORTANT FOR GOOGLE FLOW: Upload your photo as the "Starting Frame / First Frame" (NOT "Ingredients"). Uses positive geometry locks.', zh: 'Google Flow 关键提示：请将照片上传为“首帧 (Starting Frame)”，切勿使用 Ingredients 模式！' } },
+        { id: 'hailuo', name: 'Hailuo AI (I2V-01-Live)', badge: '[Camera] + Micro-Motion', tip: { en: 'Uses bracketed camera commands and subtle foreground micro-movements.', zh: '使用方括号运镜指令结合局部微动态描述。' } },
+        { id: 'kling', name: 'Kling AI (Image-to-Video)', badge: 'Start Frame Lock', tip: { en: 'Separates foreground motion from locked static background geometry.', zh: '清晰分离前景动态与静态背景几何锁定。' } },
+        { id: 'runway', name: 'Runway (Gen-3 / Gen-4 I2V)', badge: 'Motion Vector Only', tip: { en: 'Describes desired motion and camera path while locking 3D static geometry.', zh: '专注描述镜头轨迹与动作向量，锁定静态三维结构。' } }
+      ]
+    };
+
+    window.studioSchemas = {
       text: {
-        heading: { en: 'Text Studio Parameters', zh: '文本工坊参数配置' },
-        sub: { en: 'Structured building blocks for LLM precision', zh: '结构化角色、目标与约束' },
+        heading: { en: 'Text Studio Parameters (Context-First Executive Schema)', zh: '文本工坊参数配置 (上下文优先高管架构)' },
+        sub: { en: 'Structured Role, Operational Context, Core Mission, Execution Protocol & Guardrails', zh: '角色权限、运营背景、核心使命、执行协议与严格护栏' },
         fields: [
-          { key: 'role', label: { en: 'Expert Role', zh: '专家角色' }, span: 1 },
-          { key: 'tone', label: { en: 'Tone', zh: '语气风格' }, span: 1 },
-          { key: 'objective', label: { en: 'Core Objective', zh: '核心任务' }, span: 2, textarea: true },
-          { key: 'context', label: { en: 'Context', zh: '背景信息' }, span: 2 },
-          { key: 'format', label: { en: 'Format', zh: '输出结构' }, span: 1 },
-          { key: 'constraints', label: { en: 'Constraints', zh: '严格约束' }, span: 1 }
+          { key: 'role', label: { en: '1. Role & Executive Authority', zh: '1. 角色与执行权限 (Role & Authority)' }, span: 1 },
+          { key: 'tone', label: { en: 'Tone & Communication Style', zh: '沟通语气与风格' }, span: 1 },
+          { key: 'context', label: { en: '2. Operational Context & Domain Scope', zh: '2. 运营背景与领域范围 (Operational Context)' }, span: 2, textarea: true },
+          { key: 'objective', label: { en: '3. Core Mission Objective', zh: '3. 核心使命目标 (Core Mission Objective)' }, span: 2, textarea: true },
+          { key: 'format', label: { en: '4. Execution Protocol & Output Schema', zh: '4. 执行协议与输出结构 (Execution Protocol)' }, span: 1, textarea: true },
+          { key: 'constraints', label: { en: '5. Strict Guardrails', zh: '5. 严格执行护栏 (Strict Guardrails)' }, span: 1, textarea: true }
         ],
-        boosters: [{ label: '+ Step-by-Step', field: 'constraints', val: ' Think step-by-step.' }]
+        boosters: [
+          { label: '+ Ask 5–7 Discovery Questions First', field: 'constraints', val: '\n- Pause after presenting the Discovery Questions and Sprint 0 table to let the user confirm scope.' },
+          { label: '+ Multi-Agent RACI Table', field: 'format', val: '\n- Include a Markdown table: Agent Role | Scrum Responsibility | Input Artifact | Output Deliverable | Human Approval Gate.' },
+          { label: '+ Zero Conversational Filler', field: 'constraints', val: '\n- Lead directly with Part 1 (no introductory fluff).' }
+        ]
       },
       image: {
         heading: { en: 'Image Studio Parameters', zh: '图像工坊参数配置' },
-        sub: { en: 'Visual composition and lighting', zh: '视觉构图与光影' },
+        sub: { en: 'Tailored for Google Nano Banana, Midjourney, FLUX & Universal generators', zh: '针对 Nano Banana、Midjourney、FLUX 深度优化' },
         fields: [
-          { key: 'subject', label: { en: 'Subject', zh: '核心主体' }, span: 2, textarea: true },
-          { key: 'style', label: { en: 'Style', zh: '渲染风格' }, span: 1 },
-          { key: 'lighting', label: { en: 'Lighting', zh: '光影氛围' }, span: 1 },
-          { key: 'camera', label: { en: 'Camera', zh: '镜头机位' }, span: 1 },
+          { key: 'subject', label: { en: 'Primary Subject & Spatial Layout', zh: '核心主体与空间布局' }, span: 2, textarea: true },
+          { key: 'style', label: { en: 'Art Medium & Render Style', zh: '艺术媒介与渲染风格' }, span: 1 },
+          { key: 'lighting', label: { en: 'Lighting & Color Palette', zh: '光影与色彩氛围' }, span: 1 },
+          { key: 'camera', label: { en: 'Camera Angle & Lens Physics', zh: '机位角度与镜头光学参数' }, span: 1 },
           { key: 'ratio', label: { en: 'Aspect Ratio', zh: '画面比例' }, span: 1 },
-          { key: 'negative', label: { en: 'Negative Prompt', zh: '反向提示词' }, span: 2 }
+          { key: 'negative', label: { en: 'Elements to Avoid / Negative', zh: '排除项' }, span: 2 }
         ],
-        boosters: [{ label: '+ Photorealistic', field: 'camera', val: ', 85mm f/1.4 prime lens' }]
+        boosters: [
+          { label: '+ Nano Banana Crisp Typography', field: 'style', val: ', ultra-crisp legible typography, clean commercial layout' },
+          { label: '+ Photorealistic 85mm Prime', field: 'camera', val: ', 85mm f/1.4 prime lens, natural micro-texture, shallow DOF' },
+          { label: '+ Isometric 3D Cutaway', field: 'style', val: ', 3D architectural cutaway floorplan, miniature diorama' }
+        ]
       },
       video: {
         heading: { en: 'Video Studio Parameters', zh: '视频工坊参数配置' },
-        sub: { en: 'Motion trajectory and atmosphere', zh: '运镜轨迹与声画氛围' },
+        sub: { en: 'Optimized for Google Flow (Veo 3.1), Hailuo, Kling & Runway', zh: '针对 Google Flow、海螺 AI、可灵与 Runway 优化' },
         fields: [
-          { key: 'scene', label: { en: 'Scene Action', zh: '场景动作' }, span: 2, textarea: true },
-          { key: 'cameraMotion', label: { en: 'Camera Motion', zh: '摄影机运镜' }, span: 1 },
-          { key: 'pacing', label: { en: 'Pacing', zh: '运动节奏' }, span: 1 },
-          { key: 'atmosphere', label: { en: 'Atmosphere', zh: '光影调色' }, span: 1 },
-          { key: 'audio', label: { en: 'Audio Cues', zh: '音效提示' }, span: 1 },
-          { key: 'specs', label: { en: 'Specs', zh: '规格' }, span: 2 }
+          { key: 'scene', label: { en: 'Scene & Chronological Action', zh: '场景与时序动作描述' }, span: 2, textarea: true },
+          { key: 'cameraMotion', label: { en: 'Camera Movement Trajectory', zh: '摄影机运镜轨迹' }, span: 1 },
+          { key: 'pacing', label: { en: 'Motion Speed & Physics Pacing', zh: '运动节奏与物理质感' }, span: 1 },
+          { key: 'atmosphere', label: { en: 'Visual Lighting & Color Grade', zh: '视觉光影与电影调色' }, span: 1 },
+          { key: 'audio', label: { en: 'Native Audio / Ambience Cues', zh: '原生音效与环境音控制' }, span: 1 },
+          { key: 'specs', label: { en: 'Aspect Ratio, Duration & Frame Specs', zh: '画幅比例、时长与规格' }, span: 2 }
         ],
-        boosters: [{ label: '+ FPV Drone', field: 'cameraMotion', val: ', smooth FPV drone glide' }]
+        boosters: [
+          { label: '+ Flow Quiet Ambience', field: 'audio', val: 'Quiet natural room tone, subtle breeze, no background music, no dialogue' },
+          { label: '+ Hailuo [Push In] Bracket', field: 'cameraMotion', val: '[Push in] Smooth gimbal dolly forward with [Tilt up] reveal' },
+          { label: '+ Temporal Physics Lock', field: 'pacing', val: ', consistent object permanence, zero morphing' }
+        ]
       },
       i2v: {
-        heading: { en: 'Image-to-Video Studio', zh: '图生视频工坊' },
-        sub: { en: 'Preserve source image while animating vectors', zh: '锁定原图结构并控制动态' },
+        heading: { en: 'Image-to-Video (I2V) Studio', zh: '图生视频 (I2V) 工坊参数' },
+        sub: { en: 'Platform-tuned starting frame locks for Google Flow, Hailuo, Kling & Runway', zh: '针对 Google Flow、海螺、可灵、Runway 的首帧结构锁定' },
         fields: [
-          { key: 'anchor', label: { en: 'Reference Anchor', zh: '参考图锚点' }, span: 2 },
-          { key: 'subjectMotion', label: { en: 'Subject Motion', zh: '主体运动' }, span: 1, textarea: true },
-          { key: 'bgMotion', label: { en: 'Background Motion', zh: '背景微动' }, span: 1, textarea: true },
-          { key: 'cameraPath', label: { en: 'Camera Path', zh: '镜头路径' }, span: 1 },
-          { key: 'consistency', label: { en: 'Consistency Lock', zh: '结构一致性锁定' }, span: 1 }
+          { key: 'anchor', label: { en: 'Starting Frame Scene Anchor', zh: '首帧参考图场景锚点' }, span: 2 },
+          { key: 'subjectMotion', label: { en: 'Primary Subject Micro-Motion', zh: '主体局部微动态' }, span: 1, textarea: true },
+          { key: 'bgMotion', label: { en: 'Background / Atmospheric Motion', zh: '背景与环境缓慢动态' }, span: 1, textarea: true },
+          { key: 'cameraPath', label: { en: 'Single-Axis Camera Path', zh: '单轴稳定运镜路径' }, span: 1 },
+          { key: 'consistency', label: { en: 'Positive Structural Geometry Lock', zh: '正向几何结构静态锁定' }, span: 1 },
+          { key: 'audio', label: { en: 'Native Audio Restraint (Google Flow / Veo)', zh: '原生音效克制指令' }, span: 2 }
         ],
-        boosters: [{ label: '+ Locked Tripod', field: 'consistency', val: ', strict geometry lock' }]
+        boosters: [
+          { label: '+ Flow Positive Architecture Lock', field: 'consistency', val: 'All walls, cabinetry, marble surfaces, and furniture remain completely stationary, rigid, and locked to the starting frame' },
+          { label: '+ Subtle Cinemagraph', field: 'cameraPath', val: 'Locked-off tripod frame, zero lens distortion, ultra-subtle loopable micro-motion' }
+        ]
       }
     };
 
-    const templates = [
-      { title: 'Property Video Script', studio: 'text', desc: 'High-converting real estate script.' },
-      { title: '3D Isometric Floorplan', studio: 'image', desc: 'Architectural cutaway render.' },
-      { title: 'Cinematic Marina Bay Drone', studio: 'video', desc: 'Twilight aerial glide.' },
-      { title: 'Interior Photo Animator', studio: 'i2v', desc: 'Swaying curtains and coffee steam.' }
+    window.starterTemplates = [
+      {
+        id: 'txt_agile_agents',
+        studio: 'text',
+        category: 'text',
+        targetApp: 'gemini_text',
+        appBadge: 'Google Gemini (Context-First)',
+        title: 'Agile Multi-Agent Digital Marketing Squad',
+        description: 'Consolidates scope via 5–7 discovery questions and builds a Sprint 0 Multi-Agent topology for research, copy, scripts, image/video, and publishing.',
+        payload: JSON.parse(JSON.stringify(window.appState.studios.text))
+      },
+      {
+        id: 'txt_viral_script',
+        studio: 'text',
+        category: 'text',
+        targetApp: 'universal_text',
+        appBadge: 'Universal LLM',
+        title: '60s Short-Form Property / Business Script',
+        description: 'Hooks viewers in 3 seconds and explains complex financial or property concepts with zero jargon.',
+        payload: {
+          role: 'Viral Short-Form Video Producer & Financial Storyteller',
+          context: 'Advising a creator producing high-retention 60-second vertical videos (Reels, TikTok, YouTube Shorts) for first-time homeowners and upgraders in Singapore.',
+          objective: 'Write a 60-second spoken script breaking down why waiting 5 years for the Minimum Occupation Period (MOP) builds a safer upgrade cushion.',
+          tone: 'Warm, candid, data-backed, peer-to-peer',
+          format: '1. Visual + Spoken Hook (0–4s)\n2. Common Buyer Myth (4–15s)\n3. Simple Numeric Breakdown (15–45s)\n4. Low-Pressure Question CTA (45–60s)',
+          constraints: '- Keep spoken sentences under 12 words.\n- Include [Visual B-Roll Cues] in brackets.\n- Total word count: 135–150 words.'
+        }
+      },
+      {
+        id: 'i2v_flow_interior',
+        studio: 'i2v',
+        category: 'i2v',
+        targetApp: 'google_flow',
+        appBadge: 'Google Flow (Veo 3.1)',
+        title: 'Luxury Interior: Curtains & Coffee Steam',
+        description: 'Optimized for Google Flow Starting Frame mode. Animates sheer curtains and coffee steam while locking marble kitchen geometry 100% rigid.',
+        payload: JSON.parse(JSON.stringify(window.appState.studios.i2v))
+      },
+      {
+        id: 'i2v_hailuo_portrait',
+        studio: 'i2v',
+        category: 'i2v',
+        targetApp: 'hailuo',
+        appBadge: 'Hailuo AI (MiniMax)',
+        title: 'Living Portrait: Subtle Gaze & Hair Breeze',
+        description: 'Optimized for Hailuo I2V-01-Live with bracketed camera syntax and facial identity preservation.',
+        payload: {
+          anchor: 'Editorial close-up portrait photo of a confident professional in smart casual attire standing by a sunlit window',
+          subjectMotion: 'Subject maintains natural eye contact, blinks softly once, and gives a warm micro-smile as a gentle breeze moves a few loose strands of hair',
+          bgMotion: 'Warm dappled sunlight shifts softly across the blurred background wall',
+          cameraPath: '[Push in] Imperceptibly slow dolly push-in on an 85mm prime lens with shallow depth of field',
+          consistency: 'Facial structure, eye color, skin texture, eyeglasses, and clothing collar remain 100% consistent with the starting reference frame',
+          audio: 'Soft quiet room ambience, no dialogue, no background music'
+        }
+      },
+      {
+        id: 'i2v_kling_product',
+        studio: 'i2v',
+        category: 'i2v',
+        targetApp: 'kling',
+        appBadge: 'Kling AI 2.0',
+        title: 'Hero Product: Water Ripples & Mist Drift',
+        description: 'Optimized for Kling AI Start Frame mode. Animates water ripples and cool mist while keeping product logos razor-sharp.',
+        payload: {
+          anchor: 'Commercial studio photo of a glass perfume bottle resting on a wet black slate stone podium',
+          subjectMotion: 'Delicate cool white mist swirls slowly around the base of the glass bottle; golden light caustics shimmer gently inside the liquid',
+          bgMotion: 'Concentric micro-ripples expand softly across the shallow dark water surface surrounding the stone podium',
+          cameraPath: 'Slow, smooth orbital arc pan (10 degrees) maintaining crisp macro focus on the bottle center',
+          consistency: 'Bottle silhouette, glass typography, cap geometry, and stone podium remain completely solid, rigid, and unwarped',
+          audio: 'Subtle crystalline water chime and quiet studio ambience, no speech'
+        }
+      },
+      {
+        id: 'vid_flow_drone',
+        studio: 'video',
+        category: 'video',
+        targetApp: 'google_flow',
+        appBadge: 'Google Flow (Veo 3.1)',
+        title: 'Cinematic Aerial Sky-Garden Reveal',
+        description: 'Full 6-layer Google Flow prompt with camera trajectory, optical fidelity, and synchronized native audio ambience.',
+        payload: JSON.parse(JSON.stringify(window.appState.studios.video))
+      },
+      {
+        id: 'img_nano_cutaway',
+        studio: 'image',
+        category: 'image',
+        targetApp: 'nano_banana',
+        appBadge: 'Google Nano Banana',
+        title: '3D Isometric Cutaway Floorplan',
+        description: 'Tailored for Google Nano Banana natural spatial prose. Produces razor-sharp room layouts and realistic PBR materials.',
+        payload: JSON.parse(JSON.stringify(window.appState.studios.image))
+      },
+      {
+        id: 'img_mj_editorial',
+        studio: 'image',
+        category: 'image',
+        targetApp: 'midjourney',
+        appBadge: 'Midjourney v6.1 / v7',
+        title: 'Executive Brand Portrait',
+        description: 'Formatted with Midjourney optical descriptors and native --ar / --stylize / --no parameters.',
+        payload: {
+          subject: 'Editorial half-body portrait of an approachable modern Asian entrepreneur in a tailored navy smart-casual blazer standing in a sunlit architectural lounge',
+          style: 'High-end commercial magazine photography, shot on Hasselblad H6D-100c, natural skin micro-texture',
+          lighting: 'Soft directional window key light with warm golden rim light and natural catchlights in the eyes',
+          camera: '85mm f/1.4 prime lens, creamy bokeh background separation, eye-level composition',
+          ratio: '4:5',
+          negative: 'plastic skin, airbrushed face, deformed fingers, asymmetrical eyes, cartoon, watermark'
+        }
+      }
     ];
 
-    function renderStudio() {
-      const sch = schemas[state.activeStudio];
-      const dat = state.studios[state.activeStudio];
-      const lang = state.uiLang;
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.classList.toggle('dark');
+      const icon = document.getElementById('theme-icon');
+      if (icon) {
+        icon.setAttribute('data-lucide', html.classList.contains('dark') ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+    }
 
-      document.getElementById('active-studio-heading').textContent = sch.heading[lang];
-      document.getElementById('active-studio-sub').textContent = sch.sub[lang];
+    function setUILang(lang) {
+      window.appState.uiLang = lang;
+      document.getElementById('btn-ui-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white transition' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+      document.getElementById('btn-ui-zh').className = lang === 'zh' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white transition' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+      renderStudio();
+    }
+
+    function setOutLang(lang) {
+      window.appState.outLang = lang;
+      document.getElementById('btn-out-en').className = lang === 'en' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white transition' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+      document.getElementById('btn-out-zh').className = lang === 'zh' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white transition' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+      compilePrompt();
+    }
+
+    function switchStudio(studio) {
+      window.appState.activeStudio = studio;
+      window.appState.detectiveFixes = [];
+      document.querySelectorAll('.studio-btn').forEach(btn => {
+        if (btn.dataset.studio === studio) {
+          btn.className = 'studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/25';
+        } else {
+          btn.className = 'studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition text-slate-300 hover:bg-slate-800/70';
+        }
+      });
+      renderStudio();
+    }
+
+    function setTargetApp(appId) {
+      const studio = window.appState.activeStudio;
+      window.appState.targetApps[studio] = appId;
+      renderStudio();
+    }
+
+    function renderStudio() {
+      const studio = window.appState.activeStudio;
+      const lang = window.appState.uiLang;
+      const schema = window.studioSchemas[studio];
+      const stateData = window.appState.studios[studio];
+      const currentAppId = window.appState.targetApps[studio];
+      const appOptions = window.targetAppCatalog[studio] || [];
+      const activeAppObj = appOptions.find(a => a.id === currentAppId) || appOptions[0];
+
+      document.getElementById('active-studio-heading').textContent = schema.heading[lang];
+      document.getElementById('active-studio-sub').textContent = schema.sub[lang];
 
       const container = document.getElementById('studio-form-fields');
       container.innerHTML = '';
 
-      sch.fields.forEach(f => {
+      // Target Application Selector Bar
+      const appSelectorWrap = document.createElement('div');
+      appSelectorWrap.className = 'sm:col-span-2 p-3.5 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/30 space-y-2';
+      const optionsHtml = appOptions.map(app =>
+        `<option value="${app.id}" ${app.id === currentAppId ? 'selected' : ''}>${app.name} — [${app.badge}]</option>`
+      ).join('');
+
+      appSelectorWrap.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <label class="text-xs font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5">
+            <i data-lucide="cpu" class="w-4 h-4 text-indigo-500"></i>
+            <span>Target AI Application (Optimizes Syntax & Rules)</span>
+          </label>
+          <select onchange="setTargetApp(this.value)" class="bg-white dark:bg-slate-950 border border-indigo-300 dark:border-indigo-500/40 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-white focus:outline-none">
+            ${optionsHtml}
+          </select>
+        </div>
+        <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed bg-white/80 dark:bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800/80">
+          <strong class="text-indigo-600 dark:text-cyan-300">${activeAppObj.name}:</strong> ${activeAppObj.tip[lang]}
+        </p>
+      `;
+      container.appendChild(appSelectorWrap);
+
+      // Parameter Fields
+      schema.fields.forEach(f => {
         const wrap = document.createElement('div');
-        wrap.className = f.span === 2 ? 'sm:col-span-2' : 'col-span-1';
-        const lbl = document.createElement('label');
-        lbl.className = 'block text-xs font-semibold text-slate-300 mb-1';
-        lbl.textContent = f.label[lang];
+        wrap.className = f.span === 2 ? 'sm:col-span-2 space-y-1.5' : 'col-span-1 space-y-1.5';
+
+        const label = document.createElement('label');
+        label.className = 'block text-xs font-bold text-slate-700 dark:text-slate-300';
+        label.textContent = f.label[lang];
 
         const input = f.textarea ? document.createElement('textarea') : document.createElement('input');
-        if (f.textarea) input.rows = 2;
-        input.value = dat[f.key] || '';
-        input.className = 'w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none';
-        input.oninput = e => {
-          state.studios[state.activeStudio][f.key] = e.target.value;
-          compilePrompt();
-        };
+        if (f.textarea) input.rows = 3;
+        else input.type = 'text';
 
-        wrap.appendChild(lbl);
+        input.value = stateData[f.key] || '';
+        input.className = 'w-full bg-slate-50 dark:bg-slate-950/90 border border-slate-200 dark:border-slate-800 focus:border-indigo-500 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none leading-relaxed';
+        input.addEventListener('input', e => {
+          window.appState.studios[studio][f.key] = e.target.value;
+          compilePrompt();
+        });
+
+        wrap.appendChild(label);
         wrap.appendChild(input);
         container.appendChild(wrap);
       });
 
-      const boosterBox = document.getElementById('studio-boosters');
-      boosterBox.innerHTML = '';
-      sch.boosters.forEach(b => {
+      // Boosters
+      const boostersEl = document.getElementById('studio-boosters');
+      boostersEl.innerHTML = '';
+      schema.boosters.forEach(b => {
         const btn = document.createElement('button');
-        btn.className = 'px-2 py-1 rounded bg-slate-950 hover:bg-indigo-950 text-slate-300 border border-slate-800 text-xs';
+        btn.className = 'px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-950 hover:bg-indigo-600/20 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-300 border border-slate-200 dark:border-slate-800 text-[11px] font-semibold transition';
         btn.textContent = b.label;
         btn.onclick = () => {
-          state.studios[state.activeStudio][b.field] += b.val;
-          renderStudio();
+          const curr = window.appState.studios[studio][b.field] || '';
+          if (!curr.includes(b.val.trim())) {
+            window.appState.studios[studio][b.field] = (curr + ' ' + b.val).trim();
+            renderStudio();
+          }
         };
-        boosterBox.appendChild(btn);
+        boostersEl.appendChild(btn);
       });
 
       compilePrompt();
+      if (window.lucide) lucide.createIcons();
     }
 
-    function switchStudio(key) {
-      state.activeStudio = key;
-      document.querySelectorAll('.studio-btn').forEach(btn => {
-        if (btn.dataset.studio === key) {
-          btn.className = 'studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition bg-indigo-600/25 text-indigo-300 border border-indigo-500/50';
-        } else {
-          btn.className = 'studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 border border-transparent';
-        }
-      });
-      renderStudio();
+    function sanitizeForFlow(text) {
+      if (!text) return '';
+      return text.replace(/\(?\s*Motion Bucket\s*\d+\s*\)?/gi, '').replace(/--motion\s*\d+/gi, '').replace(/\s{2,}/g, ' ').trim();
     }
 
+    // Master Compiler — Enforces Your Exact Requested Context-First Format for Text Studio & Platform Formats for Image/Video/I2V
     function compilePrompt() {
-      const s = state.activeStudio;
-      const d = state.studios[s];
-      let res = '';
-      if (s === 'text') {
-        res = `# ROLE\n${d.role}\n\n# OBJECTIVE\n${d.objective}\n\n# CONTEXT\n${d.context}\n\n# TONE\n${d.tone}\n\n# FORMAT\n${d.format}\n\n# CONSTRAINTS\n${d.constraints}`;
-      } else if (s === 'image') {
-        res = `[Subject]: ${d.subject}\n[Style]: ${d.style}\n[Lighting]: ${d.lighting}\n[Camera]: ${d.camera}\n[Aspect Ratio]: --ar ${d.ratio}\n[Negative]: --no ${d.negative}`;
-      } else if (s === 'video') {
-        res = `[Scene]: ${d.scene}\n[Motion]: ${d.cameraMotion}\n[Pacing]: ${d.pacing}\n[Atmosphere]: ${d.atmosphere}\n[Audio]: ${d.audio}\n[Specs]: ${d.specs}`;
-      } else if (s === 'i2v') {
-        res = `[Anchor]: ${d.anchor}\n[Subject Motion]: ${d.subjectMotion}\n[Background Motion]: ${d.bgMotion}\n[Camera Path]: ${d.cameraPath}\n[Consistency]: ${d.consistency}\n\n[Mandatory Guardrail]: Preserve source image strictly. Apply animation vectors only.`;
+      const studio = window.appState.activeStudio;
+      const outLang = window.appState.outLang;
+      const d = window.appState.studios[studio];
+      const targetApp = window.appState.targetApps[studio];
+      let compiled = '';
+
+      if (studio === 'text') {
+        if (targetApp === 'claude') {
+          compiled = `<role_and_executive_authority>\n${d.role}\n</role_and_executive_authority>\n\n<operational_context_and_domain_scope>\n${d.context}\n</operational_context_and_domain_scope>\n\n<core_mission_objective>\n${d.objective}\n</core_mission_objective>\n\n<execution_protocol_and_output_schema>\n${d.format}\n</execution_protocol_and_output_schema>\n\n<strict_guardrails>\n- Tone: ${d.tone}\n${d.constraints}\n</strict_guardrails>`;
+        } else {
+          compiled = outLang === 'zh'
+            ? `# ROLE & EXECUTIVE AUTHORITY (角色与执行权限)\n${d.role}\n\n# OPERATIONAL CONTEXT & DOMAIN SCOPE (运营背景与领域范围)\n${d.context}\n\n# CORE MISSION OBJECTIVE (核心使命目标)\n${d.objective}\n\n# EXECUTION PROTOCOL & OUTPUT SCHEMA (执行协议与输出架构)\n${d.format}\n\n# STRICT GUARDRAILS (严格执行护栏)\n- 沟通风格：${d.tone}\n${d.constraints}`
+            : `# ROLE & EXECUTIVE AUTHORITY\n${d.role}\n\n# OPERATIONAL CONTEXT & DOMAIN SCOPE\n${d.context}\n\n# CORE MISSION OBJECTIVE\n${d.objective}\n\n# EXECUTION PROTOCOL & OUTPUT SCHEMA\n${d.format}\n\n# STRICT GUARDRAILS\n${d.constraints}`;
+        }
+      } else if (studio === 'image') {
+        if (targetApp === 'nano_banana') {
+          compiled = `Create a high-precision ${d.ratio} aspect ratio image of ${d.subject}.\n\nStyle & Surface Materials: ${d.style}.\nLighting & Atmosphere: ${d.lighting}.\nCamera & Optical Physics: ${d.camera}.\nVisual Integrity: Maintain razor-sharp structural geometry, realistic surface textures, and clean composition with zero watermarks, gibberish text, or visual artifacts (strictly avoid: ${d.negative}).`;
+        } else if (targetApp === 'midjourney') {
+          const cleanRatio = (d.ratio || '16:9').replace(/[^0-9:]/g, '') || '16:9';
+          compiled = `${d.subject}, ${d.style}, ${d.lighting}, ${d.camera} --ar ${cleanRatio} --stylize 250 --v 6.1 --no ${d.negative}`;
+        } else {
+          compiled = `Subject & Spatial Layout: ${d.subject}\nStyle & Medium: ${d.style}\nLighting & Atmosphere: ${d.lighting}\nCamera & Lens: ${d.camera} (Aspect Ratio: ${d.ratio})\nExclude: ${d.negative}`;
+        }
+      } else if (studio === 'video') {
+        if (targetApp === 'google_flow') {
+          compiled = `${sanitizeForFlow(d.cameraMotion)}. ${d.scene}. ${sanitizeForFlow(d.pacing)}, maintaining realistic spatial perspective and rigid structural permanence. ${d.atmosphere}. Cinematic ${d.specs}. Audio: ${d.audio || 'quiet natural ambient room tone, subtle breeze, no background music, no dialogue'}.`;
+        } else if (targetApp === 'hailuo') {
+          const cam = d.cameraMotion.includes('[') ? d.cameraMotion : `[${d.cameraMotion}]`;
+          compiled = `${cam} ${d.scene}. Motion & Physics: ${d.pacing}. Lighting & Grade: ${d.atmosphere}. Specs: ${d.specs}.`;
+        } else if (targetApp === 'kling') {
+          compiled = `Subject & Scene: ${d.scene}.\nCamera & Trajectory: ${d.cameraMotion}, ${d.pacing}.\nLighting & Environment: ${d.atmosphere}.\nOptical Specs: ${d.specs}, strict temporal coherence and zero morphing.`;
+        } else {
+          compiled = `${d.cameraMotion}: ${d.scene}. ${d.pacing}. ${d.atmosphere}, ${d.specs}. Audio: ${d.audio}.`;
+        }
+      } else if (studio === 'i2v') {
+        const cleanConsistency = sanitizeForFlow(d.consistency);
+        const cleanCam = sanitizeForFlow(d.cameraPath);
+        if (targetApp === 'google_flow') {
+          compiled = `Camera: ${cleanCam}, maintaining a level horizon, fixed focal length, and zero lens distortion.\n\nScene & Structural Lock: ${d.anchor} anchored to the starting frame. ${cleanConsistency}.\n\nSubject & Atmospheric Motion: ${d.subjectMotion}. Meanwhile, ${d.bgMotion}.\n\nLighting & Pacing: Consistent natural daylight with stable surface reflections and restrained, ultra-low displacement pacing over an 8-second continuous take.\n\nAudio: ${d.audio || 'Quiet indoor room tone with a barely audible gentle breeze; no background music, no voices, no sudden sound effects'}.`;
+        } else if (targetApp === 'hailuo') {
+          const bracketCam = cleanCam.includes('[') ? cleanCam : `[Push in] ${cleanCam}`;
+          compiled = `${bracketCam}. Starting from the uploaded reference frame (${d.anchor}), ${d.subjectMotion}, while ${d.bgMotion}. Structural Lock: ${cleanConsistency}. Preserve 100% of the reference image geometry and textures.`;
+        } else if (targetApp === 'kling') {
+          compiled = `Start Frame Anchor: ${d.anchor}.\nForeground Motion: ${d.subjectMotion}.\nBackground Motion: ${d.bgMotion}.\nCamera Path: ${cleanCam}.\nConsistency Lock: ${cleanConsistency} (strictly preserve source image geometry, layout, and textures).`;
+        } else {
+          compiled = `${cleanCam}. ${d.subjectMotion}. ${d.bgMotion}. All surrounding structural geometry, architecture, and static surfaces remain locked and unchanged.`;
+        }
       }
-      document.getElementById('compiled-prompt-output').value = res;
-      document.getElementById('token-counter').textContent = `~${Math.round(res.split(/\s+/).length * 1.3)} tokens`;
+
+      if (window.appState.detectiveFixes.length > 0) {
+        compiled += '\n\n' + window.appState.detectiveFixes.join('\n');
+      }
+
+      const outEl = document.getElementById('compiled-prompt-output');
+      if (outEl) {
+        outEl.value = compiled;
+        updateTokenTelemetry(compiled);
+        runPreflightCheck(compiled);
+      }
     }
 
+    function updateTokenTelemetry(text) {
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      const estTokens = Math.max(1, Math.round(words * 1.35));
+      const counter = document.getElementById('token-counter');
+      if (counter) counter.textContent = `~${estTokens} tokens`;
+    }
+
+    function runPreflightCheck(text) {
+      const studio = window.appState.activeStudio;
+      const targetApp = window.appState.targetApps[studio];
+      const issuesEl = document.getElementById('preflight-issues');
+      const badgeEl = document.getElementById('quality-score-badge');
+      if (!issuesEl || !badgeEl) return;
+
+      const issues = [];
+      let score = 98;
+
+      if (text.length < 80) {
+        issues.push({ type: 'warn', msg: 'Prompt is brief. Use Smart Auto-Fill or Auto-Repair to enrich context and guardrails.' });
+        score -= 15;
+      }
+      if ((studio === 'i2v' || studio === 'video') && targetApp === 'google_flow' && !/audio:/i.test(text)) {
+        issues.push({ type: 'warn', msg: 'Veo 3.1 generates native audio. Click Auto-Repair to append an Audio restraint cue.' });
+        score -= 10;
+      }
+
+      if (issues.length === 0) {
+        issues.push({
+          type: 'ok',
+          msg: `100% Platform-Ready for ${targetApp.toUpperCase().replace('_', ' ')}: Context-First structure & guardrails verified.`
+        });
+      }
+
+      badgeEl.textContent = `Score: ${Math.max(50, score)}/100`;
+      issuesEl.innerHTML = issues.map(item =>
+        `<li class="flex items-start gap-2 ${item.type === 'warn' ? 'text-amber-600 dark:text-amber-300' : 'text-emerald-600 dark:text-emerald-300'} font-semibold">
+          <span>${item.type === 'warn' ? '⚠️' : '✓'}</span>
+          <span>${item.msg}</span>
+        </li>`
+      ).join('');
+    }
+
+    // FIXED SMART START: Re-synthesizes ALL 6 fields cleanly so no leftover "First-time homeowners" ever remains!
     function runSmartStart() {
       const raw = document.getElementById('smart-start-input').value.trim();
       if (!raw) return;
-      state.studios[state.activeStudio].objective = raw;
-      state.studios[state.activeStudio].subject = raw;
-      state.studios[state.activeStudio].scene = raw;
+      const lower = raw.toLowerCase();
+
+      const isTextOrAgentWorkflow =
+        /\b(agentic|agent|agile|scrum|methodology|scope of work|team leader|ask questions|workflow|strategy|script|copywriting|blog|email|plan|consultant|researching|sop|framework)\b/i.test(lower);
+
+      const isI2V =
+        !isTextOrAgentWorkflow &&
+        /\b(animate|starting frame|uploaded photo|reference photo|image to video|photo to video|i2v|billowing|steam rising)\b/i.test(lower);
+
+      const isVideo =
+        !isTextOrAgentWorkflow &&
+        !isI2V &&
+        /\b(drone|footage|slow-motion|cinematic shot|gimbal|camera pan|dolly|b-roll|veo|google flow|hailuo|kling|runway)\b/i.test(lower);
+
+      const isImage =
+        !isTextOrAgentWorkflow &&
+        !isI2V &&
+        !isVideo &&
+        /\b(floorplan|cutaway|isometric|3d render|illustration|portrait photo|poster|infographic|midjourney|nano banana|flux)\b/i.test(lower);
+
+      if (isI2V) {
+        switchStudio('i2v');
+        window.appState.studios.i2v = {
+          anchor: raw,
+          subjectMotion: 'Sheer curtains or foreground elements move gently with natural physical inertia',
+          bgMotion: 'Soft clouds or ambient background elements drift imperceptibly slowly',
+          cameraPath: 'Slow, ultra-steady gimbal dolly push-in along the central axis, level horizon, zero lens distortion',
+          consistency: 'All architectural geometry, walls, cabinetry, surfaces, and furniture remain completely stationary, rigid, and locked to the starting frame',
+          audio: 'Quiet indoor room tone with a barely audible gentle breeze; no background music, no voices, no sudden sound effects'
+        };
+      } else if (isVideo) {
+        switchStudio('video');
+        window.appState.studios.video = {
+          scene: raw,
+          cameraMotion: 'Smooth stabilized gimbal forward push-in with fixed focal length and zero horizon roll',
+          pacing: 'Fluid cinematic pacing over an 8-second continuous take with realistic physics',
+          atmosphere: 'Natural balanced lighting with realistic surface reflections and cinema-grade color depth',
+          audio: 'Subtle realistic environmental ambience matched to the visual action; no random voices or music',
+          specs: '16:9 widescreen, 8 seconds, 24fps photorealistic cinematography'
+        };
+      } else if (isImage) {
+        switchStudio('image');
+        window.appState.studios.image = {
+          subject: raw,
+          style: 'High-precision commercial visualization, physically based rendering (PBR) materials, clean spatial hierarchy',
+          lighting: 'Warm directional natural lighting with balanced shadow falloff',
+          camera: 'True 45-degree isometric or 50mm f/2.8 rectilinear lens, sharp edge-to-edge clarity, 8k detail',
+          ratio: '16:9',
+          negative: 'blurry text, warped geometry, cluttered background, watermark, visual artifacts'
+        };
+      } else {
+        switchStudio('text');
+        setTargetApp('gemini_text');
+        const isAgileAgent = /\b(agentic|agent|agile|scrum)\b/i.test(lower);
+
+        if (isAgileAgent) {
+          window.appState.studios.text = {
+            role: 'Principal Agile AI Systems Architect, Scrum Master & Multi-Agent Workflow Lead',
+            context: 'You are advising a Team Leader at a digital marketing agency who is transitioning an end-to-end social media production pipeline into an autonomous Agile/Scrum Multi-Agent system. The target pipeline covers five core functions:\n1. Topic & Trend Research Agent (market intelligence, viral hooks, competitor analysis)\n2. Content Strategy & Copywriting Agent (campaign angles, captions, value propositions)\n3. Scriptwriting Agent (retention-optimized short/long-form video scripts)\n4. Visual & Video Asset Agent (image prompts for Nano Banana/Midjourney and video prompts for Google Flow/Hailuo/Kling)\n5. QA & Social Publishing Agent (brand compliance check, scheduling, analytics feedback loop)',
+            objective: 'Consolidate the exact operational scope, tool stack, and human-in-the-loop (HITL) governance required to build and deploy this Agile Agentic Marketing Squad.',
+            tone: 'Consultative, structured, pragmatic, and execution-focused',
+            format: 'Follow this strict two-part response structure:\n1. Part 1: High-Leverage Discovery Questions (5–7 Questions)\n   Group your questions under:\n   - A. Channels, Content Volume & Brand Guardrails\n   - B. Agent Autonomy vs. Human Approval Gates\n   - C. Current Tool Stack & API Integrations\n2. Part 2: Initial Sprint 0 Multi-Agent Topology (Markdown Table)\n   Provide a proposed baseline table with columns: Agent Role | Scrum Responsibility | Input Artifact | Output Deliverable | Human Approval Gate.',
+            constraints: '- Lead directly with Part 1 (no conversational filler).\n- Do NOT write generic marketing scripts or final campaign assets yet.\n- Pause at the end of Part 2 and wait for the Team Leader\'s answers before finalizing the Sprint 1 Backlog.'
+          };
+        } else {
+          window.appState.studios.text = {
+            role: 'Senior Domain Strategy & Execution Architect',
+            context: `Operational context derived from user request: "${raw}"`,
+            objective: `Deliver a complete, high-precision solution for: ${raw}`,
+            tone: 'Authoritative, clear, pragmatic, and action-oriented',
+            format: '1. Clarifying Questions & Assumptions -> 2. Core Strategic Execution Plan -> 3. Structured Summary Table',
+            constraints: '- Lead directly with the deliverable (no conversational filler).\n- Use concrete examples and measurable criteria.'
+          };
+        }
+      }
       renderStudio();
+    }
+
+    function loadSampleIdea(type) {
+      const samples = {
+        agile: 'i want to build a agentic team using agile and scrum methodology. ask questions to consolidate the scope of work. i am a team leader in a digital marketing company. Agentic agent to replace my team members who is researching on topics, content creation, writing script, create image and video before posting on social media.',
+        i2v: 'Animate this luxury marble kitchen photo in Google Flow with sheer white balcony curtains billowing gently in a light breeze and soft steam rising from the coffee cup on the island.',
+        image: '3D isometric cutaway floorplan of a modern luxury 3-bedroom condominium unit with warm oak flooring and marble kitchen island',
+        video: 'Aerial drone shot gliding smoothly past lush vertical sky gardens toward an infinity pool overlooking the city skyline at dusk'
+      };
+      document.getElementById('smart-start-input').value = samples[type] || samples.agile;
+      runSmartStart();
+    }
+
+    function runAutoRepair() {
+      runSmartStart();
     }
 
     function runSmartTokenSaver() {
-      const el = document.getElementById('compiled-prompt-output');
-      el.value = el.value.replace(/could you please kindly|i would like you to/gi, '').trim();
+      const outEl = document.getElementById('compiled-prompt-output');
+      window.appState.previousPromptBackup = outEl.value;
+      const compact = outEl.value
+        .replace(/\b(please|kindly|I would like you to|could you|basically|actually)\b/gi, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+      outEl.value = compact;
+      document.getElementById('token-saver-banner').classList.remove('hidden');
+      updateTokenTelemetry(compact);
+    }
+
+    function undoTokenSaver() {
+      if (window.appState.previousPromptBackup) {
+        const outEl = document.getElementById('compiled-prompt-output');
+        outEl.value = window.appState.previousPromptBackup;
+        updateTokenTelemetry(outEl.value);
+        document.getElementById('token-saver-banner').classList.add('hidden');
+      }
+    }
+
+    function applyDetectiveFix(type) {
+      const fixes = {
+        generic: '- Anti-Cliché Rule: Ban generic AI filler words ("delve", "testament", "tapestry"). Use concrete mechanisms and specific metrics.',
+        hallucination: '- Fact-Grounding Lock: Do not invent statistics or unverified claims. Ask clarifying questions when scope parameters are missing.',
+        visual_artifacts: '- Optical & Geometry Lock: Maintain rigid structural lines, fixed focal length, and zero temporal flickering or morphing.',
+        format_ignored: '- Strict Schema Lock: Follow the exact headings and table columns specified above with zero introductory commentary.'
+      };
+      if (fixes[type] && !window.appState.detectiveFixes.includes(fixes[type])) {
+        window.appState.detectiveFixes.push(fixes[type]);
+        compilePrompt();
+      }
+      toggleModal('detective-modal');
+    }
+
+    // API Key Storage & Live Gemini Auto-Discovery
+    function getStoredApiKey() {
+      return (
+        document.getElementById('vault-api-key')?.value?.trim() ||
+        localStorage.getItem('pb_gemini_api_key') ||
+        sessionStorage.getItem('pb_gemini_api_key') ||
+        ''
+      );
+    }
+
+    function updateVaultBadge(isReady, labelText = 'GEMINI Ready') {
+      const badge = document.getElementById('vault-status-badge');
+      if (!badge) return;
+      if (isReady) {
+        badge.textContent = labelText;
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+      } else {
+        badge.textContent = 'Local Mode';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400';
+      }
+    }
+
+    async function testVaultConnection() {
+      const key = getStoredApiKey();
+      const box = document.getElementById('vault-test-status');
+      box.classList.remove('hidden');
+
+      if (!key) {
+        box.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+        box.textContent = 'Please paste your Google Gemini API key first.';
+        return;
+      }
+
+      box.className = 'p-3 rounded-xl text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30';
+      box.textContent = 'Verifying key with Google AI Studio...';
+
+      try {
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`);
+        const data = await resp.json().catch(() => ({}));
+        if (resp.ok && Array.isArray(data.models)) {
+          localStorage.setItem('pb_gemini_api_key', key);
+          sessionStorage.setItem('pb_gemini_api_key', key);
+          updateVaultBadge(true, 'GEMINI Ready ✓');
+          box.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
+          box.textContent = `Connected ✓ Verified ${data.models.length} accessible Gemini models on your key!`;
+        } else {
+          box.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+          box.textContent = `Google API Error: ${data?.error?.message || resp.statusText}`;
+        }
+      } catch (e) {
+        box.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+        box.textContent = `Network Error: ${e.message}`;
+      }
+    }
+
+    function saveEncryptedKey() {
+      const key = document.getElementById('vault-api-key').value.trim();
+      if (!key) {
+        testVaultConnection();
+        return;
+      }
+      localStorage.setItem('pb_gemini_api_key', key);
+      sessionStorage.setItem('pb_gemini_api_key', key);
+      updateVaultBadge(true, 'GEMINI Ready ✓');
+      toggleModal('vault-modal');
+    }
+
+    function clearVaultKeys() {
+      localStorage.removeItem('pb_gemini_api_key');
+      sessionStorage.removeItem('pb_gemini_api_key');
+      document.getElementById('vault-api-key').value = '';
+      updateVaultBadge(false);
+    }
+
+    async function callGeminiWithAutoDiscovery(apiKey, fullPrompt) {
+      let candidateModels = [];
+      const errors = [];
+
+      try {
+        const listResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`);
+        if (listResp.ok) {
+          const listData = await listResp.json();
+          const available = (listData.models || [])
+            .filter(m =>
+              Array.isArray(m.supportedGenerationMethods) &&
+              m.supportedGenerationMethods.includes('generateContent') &&
+              /gemini/i.test(m.name) &&
+              !/embedding|imagen|veo|audio|tts|vision|aqa|2\.0-flash/i.test(m.name)
+            )
+            .map(m => m.name.replace(/^models\//, ''));
+
+          const preferredOrder = [
+            ...available.filter(n => /flash-lite/i.test(n)),
+            ...available.filter(n => /flash/i.test(n) && !/flash-lite/i.test(n)),
+            ...available.filter(n => /pro/i.test(n))
+          ];
+          candidateModels = [...new Set([...preferredOrder, ...available])];
+        }
+      } catch (e) {
+        console.warn('Auto-discovery fallback:', e);
+      }
+
+      if (candidateModels.length === 0) {
+        candidateModels = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
+      }
+
+      for (const modelName of candidateModels.slice(0, 4)) {
+        try {
+          const resp = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey)}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: fullPrompt }] }],
+                generationConfig: { temperature: 0.35 }
+              })
+            }
+          );
+          if (resp.ok) {
+            const data = await resp.json();
+            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+            if (text) return { success: true, text, modelUsed: modelName };
+          } else {
+            const errJson = await resp.json().catch(() => ({}));
+            errors.push(`${modelName}: ${errJson?.error?.message || resp.status}`);
+          }
+        } catch (err) {
+          errors.push(`${modelName}: ${err.message}`);
+        }
+      }
+      return { success: false, error: errors[0] || 'No active model responded' };
+    }
+
+    async function polishWithBYOK() {
+      const outputEl = document.getElementById('compiled-prompt-output');
+      const btnLabel = document.getElementById('lbl-ai-enhance');
+      const studio = window.appState.activeStudio;
+      const targetApp = window.appState.targetApps[studio];
+      const apiKey = getStoredApiKey();
+      const originalPrompt = outputEl.value.trim();
+
+      let candidatePrompt = '';
+      let modeLabel = '';
+
+      const systemRules = studio === 'text'
+        ? `You are a Principal AI Prompt Architect. Upgrade and polish the user's prompt while strictly preserving this exact 5-section Context-First heading structure:
+# ROLE & EXECUTIVE AUTHORITY
+# OPERATIONAL CONTEXT & DOMAIN SCOPE
+# CORE MISSION OBJECTIVE
+# EXECUTION PROTOCOL & OUTPUT SCHEMA
+# STRICT GUARDRAILS
+Make every section sharper, executive-ready, and tailored to the user's exact domain. Return ONLY the upgraded prompt text with no markdown code fences.`
+        : `You are a Principal Visual & Video Prompt Architect for ${targetApp.toUpperCase()}. Enrich optical lens physics, positive structural geometry locks, realistic motion inertia, and native platform syntax without altering the user's core scene. Return ONLY the upgraded prompt text.`;
+
+      if (apiKey) {
+        const oldText = btnLabel.textContent;
+        btnLabel.textContent = 'Optimizing...';
+        try {
+          const res = await callGeminiWithAutoDiscovery(apiKey, `${systemRules}\n\nUSER DRAFT PROMPT:\n${originalPrompt}`);
+          if (res.success && res.text !== originalPrompt) {
+            candidatePrompt = res.text;
+            modeLabel = `✓ Live Gemini API Connected (${res.modelUsed} • ${targetApp.toUpperCase()})`;
+          } else if (!res.success) {
+            modeLabel = `Built-in Context-First Optimizer (${res.error})`;
+          }
+        } finally {
+          btnLabel.textContent = oldText;
+        }
+      } else {
+        modeLabel = 'Built-in Context-First Optimizer (Add key in BYOK Vault for Live Gemini rewrite)';
+      }
+
+      if (!candidatePrompt || candidatePrompt === originalPrompt) {
+        candidatePrompt = originalPrompt + '\n- Verification Gate: Confirm all operational constraints and handoff schemas before executing.';
+      }
+
+      document.getElementById('diff-before-text').value = originalPrompt;
+      document.getElementById('diff-after-text').value = candidatePrompt;
+      document.getElementById('diff-mode-badge').textContent = modeLabel;
+      toggleModal('optimize-diff-modal');
+    }
+
+    function acceptOptimizedPrompt() {
+      const afterEl = document.getElementById('diff-after-text');
+      const outputEl = document.getElementById('compiled-prompt-output');
+      window.appState.previousPromptBackup = outputEl.value;
+      outputEl.value = afterEl.value;
+      updateTokenTelemetry(outputEl.value);
+      runPreflightCheck(outputEl.value);
+      toggleModal('optimize-diff-modal');
+    }
+
+    function renderTemplatesGrid(category = 'all') {
+      const grid = document.getElementById('templates-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const filtered = category === 'all'
+        ? window.starterTemplates
+        : window.starterTemplates.filter(t => t.category === category);
+
+      ['all', 'text', 'i2v', 'video', 'image'].forEach(cat => {
+        const btn = document.getElementById(`btn-cat-${cat}`);
+        if (btn) {
+          btn.className = cat === category
+            ? 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition shrink-0'
+            : 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0';
+        }
+      });
+
+      filtered.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/90 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition flex flex-col justify-between space-y-3';
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-300">${t.studio.toUpperCase()}</span>
+              <span class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30">${t.appBadge}</span>
+            </div>
+            <h4 class="font-bold text-sm text-slate-900 dark:text-white">${t.title}</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">${t.description}</p>
+          </div>
+          <button onclick="loadTemplate('${t.id}')" class="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition">
+            Load Platform-Optimized Template →
+          </button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterTemplates(cat) { renderTemplatesGrid(cat); }
+
+    function loadTemplate(id) {
+      const t = window.starterTemplates.find(x => x.id === id);
+      if (!t) return;
+      window.appState.activeStudio = t.studio;
+      if (t.targetApp) window.appState.targetApps[t.studio] = t.targetApp;
+      window.appState.studios[t.studio] = JSON.parse(JSON.stringify(t.payload));
+      switchStudio(t.studio);
+      toggleModal('templates-modal');
+    }
+
+    function resetCurrentStudio() {
+      const s = window.appState.activeStudio;
+      Object.keys(window.appState.studios[s]).forEach(k => { window.appState.studios[s][k] = ''; });
+      window.appState.detectiveFixes = [];
+      renderStudio();
     }
 
     function copyCompiledPrompt() {
-      navigator.clipboard.writeText(document.getElementById('compiled-prompt-output').value);
-      alert('Prompt copied to clipboard!');
+      const outEl = document.getElementById('compiled-prompt-output');
+      navigator.clipboard.writeText(outEl.value);
+      const lbl = document.getElementById('lbl-copy-btn');
+      const prev = lbl.textContent;
+      lbl.textContent = 'Copied! ✓';
+      setTimeout(() => { lbl.textContent = prev; }, 1500);
     }
 
     function exportPromptJSON() {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const s = window.appState.activeStudio;
+      const payload = {
+        version: '2.2',
+        studio: s,
+        targetApp: window.appState.targetApps[s],
+        parameters: window.appState.studios[s],
+        compiledPrompt: document.getElementById('compiled-prompt-output').value,
+        timestamp: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'prompt-export.json';
+      a.download = `prompt-${s}-${payload.targetApp}.json`;
       a.click();
     }
 
-    function openVaultModal() { document.getElementById('vault-modal').classList.remove('hidden'); }
-    function closeVaultModal() { document.getElementById('vault-modal').classList.add('hidden'); }
-    function saveApiKey() {
-      localStorage.setItem('gemini_key', document.getElementById('vault-api-key').value);
-      document.getElementById('vault-status-badge').textContent = 'GEMINI Ready';
-      document.getElementById('vault-status-badge').className = 'px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-      closeVaultModal();
-    }
-
-    async function testGeminiConnection() {
-      const key = document.getElementById('vault-api-key').value.trim() || localStorage.getItem('gemini_key');
-      const resBox = document.getElementById('test-connection-result');
-      resBox.classList.remove('hidden');
-      if (!key) {
-        resBox.className = 'p-3 rounded-xl text-xs bg-rose-500/20 text-rose-300';
-        resBox.textContent = 'Please enter a Gemini API key first.';
-        return;
-      }
-      resBox.className = 'p-3 rounded-xl text-xs bg-indigo-500/20 text-indigo-300';
-      resBox.textContent = 'Testing connection with Gemini 2.5 Flash...';
-      try {
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
-        if (resp.ok) {
-          const data = await resp.json();
-          const count = (data.models || []).length;
-          resBox.className = 'p-3 rounded-xl text-xs bg-emerald-500/20 text-emerald-300';
-          resBox.textContent = `Connected ✓ Verified ${count} accessible Gemini models on your key.`;
-        } else {
-          const err = await resp.json();
-          resBox.className = 'p-3 rounded-xl text-xs bg-rose-500/20 text-rose-300';
-          resBox.textContent = `Connection failed: ${err.error?.message || resp.statusText}`;
-        }
-      } catch (e) {
-        resBox.className = 'p-3 rounded-xl text-xs bg-rose-500/20 text-rose-300';
-        resBox.textContent = `Network error: ${e.message}`;
-      }
-    }
-
-    function openTemplatesModal() {
-      const container = document.getElementById('templates-list-container');
-      container.innerHTML = '';
-      templates.forEach(t => {
-        const item = document.createElement('div');
-        item.className = 'p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500 cursor-pointer flex justify-between items-center';
-        item.innerHTML = `<div><div class="font-bold text-xs text-white">${t.title}</div><div class="text-[11px] text-slate-400">${t.desc}</div></div><span class="text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 uppercase">${t.studio}</span>`;
-        item.onclick = () => { switchStudio(t.studio); closeTemplatesModal(); };
-        container.appendChild(item);
-      });
-      document.getElementById('templates-modal').classList.remove('hidden');
-    }
-    function closeTemplatesModal() { document.getElementById('templates-modal').classList.add('hidden'); }
-
-    function setUILang(lang) {
-      state.uiLang = lang;
-      renderStudio();
-    }
-    function setOutLang(lang) { state.outLang = lang; compilePrompt(); }
-    function resetCurrentStudio() {
-      Object.keys(state.studios[state.activeStudio]).forEach(k => state.studios[state.activeStudio][k] = '');
-      renderStudio();
+    function toggleModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('hidden');
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      if (getStoredApiKey()) {
+        updateVaultBadge(true, 'GEMINI Ready ✓');
+      }
       renderStudio();
-      lucide.createIcons();
+      renderTemplatesGrid('all');
+      if (window.lucide) lucide.createIcons();
     });
   </script>
 </body>

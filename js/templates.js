@@ -1,180 +1,213 @@
 window.starterTemplates = [
+  // ==================== IMAGE-TO-VIDEO (I2V) TEMPLATES ====================
   {
-    id: 't1',
-    studio: 'text',
-    category: 'text',
-    title: 'Short-Form Video Script',
-    description: 'Hook viewers in 5 seconds and deliver high-retention storytelling for TikTok, Reels, or Shorts.',
+    id: 'i2v_flow_interior',
+    studio: 'i2v',
+    category: 'i2v',
+    targetApp: 'google_flow',
+    appBadge: 'Google Flow (Veo 3.1)',
+    title: 'Luxury Interior: Curtains & Coffee Steam',
+    description: 'Optimized for Google Flow Starting Frame mode. Animates sheer curtains and coffee steam while locking marble kitchen geometry 100% rigid.',
     payload: {
-      role: 'Viral Short-Form Video Copywriter & Content Strategist',
-      objective: 'Write a high-converting 60-second video script explaining a complex topic simply.',
-      context: 'Target audience: Digital natives with short attention spans looking for actionable insights.',
-      tone: 'Energetic, authoritative, conversational, punchy',
-      format: 'Hook (0-5s) -> Core Insight (5-40s) -> Proof (40-50s) -> CTA (50-60s)',
-      constraints: 'Avoid corporate jargon; keep sentences under 12 words for smooth spoken delivery.'
+      anchor: 'High-resolution interior photo of an open-concept luxury marble kitchen and living area',
+      subjectMotion: 'Sheer white floor-to-ceiling balcony curtains billow gently inward with realistic fabric physics in a light breeze; delicate translucent wisps of steam rise slowly from the ceramic coffee cup on the marble island',
+      bgMotion: 'Soft clouds drift imperceptibly across the distant city skyline outside the glass windows',
+      cameraPath: 'Slow, ultra-steady gimbal dolly push-in moving smoothly forward along the central axis of the marble kitchen island, level horizon, zero lens distortion',
+      consistency: 'All architectural geometry, walls, cabinetry, marble waterfall countertops, island edges, and furniture remain completely stationary, rigid, and structurally unchanged from the starting frame',
+      audio: 'Quiet luxury indoor room tone with a barely audible gentle breeze near the balcony; no background music, no voices, no sudden sound effects'
     }
   },
   {
-    id: 't2',
-    studio: 'text',
-    category: 'text',
-    title: 'Executive Strategic Brief',
-    description: 'Synthesize market research and financial data into an executive-ready decision memo.',
+    id: 'i2v_hailuo_portrait',
+    studio: 'i2v',
+    category: 'i2v',
+    targetApp: 'hailuo',
+    appBadge: 'Hailuo AI (MiniMax)',
+    title: 'Living Portrait: Subtle Gaze & Hair Breeze',
+    description: 'Optimized for Hailuo I2V-01-Live. Uses bracketed camera syntax and micro-expression physics while preserving facial identity.',
     payload: {
-      role: 'Principal Business Strategy Consultant',
-      objective: 'Analyze market trends and provide a structured go-to-market recommendation memo.',
-      context: 'Audience: C-suite executives evaluating risk-adjusted return on investment.',
-      tone: 'Objective, analytical, data-grounded, professional',
-      format: 'Executive Summary -> Market Overview -> Key Risks -> Strategic Recommendation',
-      constraints: 'Lead directly with conclusions; use bullet points; omit conversational filler.'
+      anchor: 'Editorial close-up portrait photo of a confident professional in smart casual attire standing by a sunlit window',
+      subjectMotion: 'Subject maintains natural eye contact, blinks softly once, and gives a subtle, warm micro-smile as a gentle breeze moves a few loose strands of hair',
+      bgMotion: 'Warm dappled sunlight shifts softly across the blurred background wall',
+      cameraPath: '[Push in] Imperceptibly slow dolly push-in on an 85mm prime lens with shallow depth of field',
+      consistency: 'Facial structure, eye color, skin texture, eyeglasses, and clothing collar remain 100% consistent with the starting reference frame',
+      audio: 'Soft quiet room ambience, no dialogue, no background music'
     }
   },
   {
-    id: 't3',
-    studio: 'text',
-    category: 'text',
-    title: 'Customer FAQ & Objection Handler',
-    description: 'Address customer pain points and dismantle purchase hesitation with empathy and logic.',
+    id: 'i2v_kling_product',
+    studio: 'i2v',
+    category: 'i2v',
+    targetApp: 'kling',
+    appBadge: 'Kling AI 1.6 / 2.0',
+    title: 'Hero Product: Water Ripples & Mist Drift',
+    description: 'Optimized for Kling AI Start Frame mode. Animates surrounding water ripples and cool mist while keeping product logos razor-sharp.',
     payload: {
-      role: 'Customer Success & Conversion Optimization Lead',
-      objective: 'Draft top 5 objections and persuasive counter-responses for buyers.',
-      context: 'Audience: Hesitant prospective clients evaluating long-term commitments.',
-      tone: 'Empathetic, reassuring, transparent, authoritative',
-      format: 'Objection Title -> Root Cause -> Reassurance Strategy -> Actionable Next Step',
-      constraints: 'Acknowledge concerns immediately without sounding defensive or dismissive.'
+      anchor: 'Commercial studio photo of a glass perfume bottle resting on a wet black slate stone podium',
+      subjectMotion: 'Delicate cool white mist swirls and glides slowly around the base of the glass bottle; golden light caustics shimmer gently inside the liquid',
+      bgMotion: 'Concentric micro-ripples expand softly across the shallow dark water surface surrounding the stone podium',
+      cameraPath: 'Slow, smooth orbital arc pan (10 degrees) maintaining crisp macro focus on the bottle center',
+      consistency: 'Bottle silhouette, glass typography, cap geometry, and stone podium remain completely solid, rigid, and unwarped',
+      audio: 'Subtle crystalline water chime and quiet studio ambience, no speech'
     }
   },
   {
-    id: 't4',
-    studio: 'text',
-    category: 'text',
-    title: 'Code Review & Refactoring Architect',
-    description: 'Audit messy source code for performance bottlenecks, security flaws, and clean architecture.',
+    id: 'i2v_runway_architecture',
+    studio: 'i2v',
+    category: 'i2v',
+    targetApp: 'runway',
+    appBadge: 'Runway Gen-3 / Gen-4',
+    title: 'Architectural Exterior: Dusk Water & Clouds',
+    description: 'Optimized for Runway I2V motion-first rules. Focuses purely on camera trajectory and water reflections without re-describing static walls.',
     payload: {
-      role: 'Senior Staff Software Architect & Code Reviewer',
-      objective: 'Review provided code snippet, identify anti-patterns, and provide refactored clean code.',
-      context: 'Audience: Software engineers looking for production-grade best practices.',
-      tone: 'Precise, technical, constructive, concise',
-      format: 'Critical Bottlenecks -> Security Risks -> Refactored Code -> Performance Delta',
-      constraints: 'Provide exact code blocks with inline comments explaining design patterns.'
+      anchor: 'Architectural exterior photo of a modern condominium facade beside a reflective lap pool at twilight',
+      subjectMotion: 'Gentle ripples shimmer across the infinity pool surface, reflecting the warm interior lights naturally',
+      bgMotion: 'Twilight clouds glide slowly across the deep blue evening sky; palm fronds sway gently in the breeze',
+      cameraPath: 'Continuous, steady low-angle crane pedestal up combined with a slow forward dolly push',
+      consistency: 'Building facade, balcony glass railings, columns, and structural lines remain strictly locked in perspective',
+      audio: 'Gentle evening breeze and soft water lapping, no music'
+    }
+  },
+
+  // ==================== TEXT-TO-VIDEO TEMPLATES ====================
+  {
+    id: 'vid_flow_drone',
+    studio: 'video',
+    category: 'video',
+    targetApp: 'google_flow',
+    appBadge: 'Google Flow (Veo 3.1)',
+    title: 'Cinematic Aerial Sky-Garden Reveal',
+    description: 'Full 6-layer Google Flow prompt with camera trajectory, optical fidelity, and synchronized native audio ambience.',
+    payload: {
+      scene: 'Aerial drone shot gliding smoothly past lush vertical sky gardens toward a cantilevered infinity pool overlooking the Singapore city skyline at golden hour dusk',
+      cameraMotion: 'Smooth stabilized gimbal forward push-in with a gradual upward tilt reveal, fixed 24mm wide cinema lens, zero horizon roll',
+      pacing: 'Fluid, unhurried luxury real estate pacing over an 8-second continuous take with realistic water physics',
+      atmosphere: 'Warm twilight amber interior architectural glow contrasting with a deep sapphire evening sky and soft reflections',
+      audio: 'Subtle high-altitude evening breeze, gentle infinity pool water ripples, warm minimalist ambient soundscape, no voices',
+      specs: '16:9 widescreen, 8 seconds, 24fps photorealistic architectural cinematography'
     }
   },
   {
-    id: 't5',
+    id: 'vid_hailuo_macro',
+    studio: 'video',
+    category: 'video',
+    targetApp: 'hailuo',
+    appBadge: 'Hailuo AI (Director)',
+    title: 'Culinary / Product Slow-Motion Pour',
+    description: 'Built for Hailuo Director mode using bracketed camera cues and high-frame-rate fluid physics.',
+    payload: {
+      scene: 'Rich, velvety espresso pouring in ultra-slow motion into a crystal glass filled with clear ice cubes and cold milk on a dark walnut counter, creating swirling caramel marble patterns',
+      cameraMotion: '[Push in] Slow macro dolly push-in combined with [Track right] subtle 15-degree orbital movement',
+      pacing: '120fps high-speed phantom camera slow-motion fluid dynamics, crisp droplet physics',
+      atmosphere: 'Warm morning café backlight streaming through a window, dramatic rim lighting on glass condensation',
+      audio: 'Crisp ice clink, rich espresso pour sound, warm quiet café room tone',
+      specs: '9:16 vertical, 6 seconds, 100mm f/2.8 macro cinema lens'
+    }
+  },
+  {
+    id: 'vid_kling_lifestyle',
+    studio: 'video',
+    category: 'video',
+    targetApp: 'kling',
+    appBadge: 'Kling AI 2.0',
+    title: 'Property Tour Walk-Through POV',
+    description: 'Optimized for Kling AI chronological spatial continuity—ideal for virtual showroom walk-throughs.',
+    payload: {
+      scene: 'First-person stabilized walkthrough emerging from a sleek private elevator foyer into a sunlit double-height penthouse living room with panoramic floor-to-ceiling city views',
+      cameraMotion: '3-axis Steadicam forward glide at eye level, panning smoothly 20 degrees right toward the balcony',
+      pacing: 'Natural human walking speed transitioning into a slow, awe-inspiring pause near the glass window',
+      atmosphere: 'Bright natural morning sunlight casting crisp geometric shadows across herringbone oak floors',
+      audio: 'Soft footsteps on wood floor, quiet luxury penthouse acoustics',
+      specs: '16:9, 10 seconds, 18mm rectilinear architectural lens, zero edge warping'
+    }
+  },
+
+  // ==================== IMAGE STUDIO TEMPLATES ====================
+  {
+    id: 'img_nano_cutaway',
     studio: 'image',
     category: 'image',
+    targetApp: 'nano_banana',
+    appBadge: 'Google Nano Banana',
     title: '3D Isometric Cutaway Floorplan',
-    description: 'Create miniature diorama architectural renderings with warm wood textures and natural light.',
+    description: 'Tailored for Google Nano Banana natural spatial prose. Produces razor-sharp room layouts, textures, and optional clean room labels.',
     payload: {
-      subject: '3D isometric architectural cutaway of a modern luxury 3-bedroom condominium with warm wood interiors',
-      style: 'Miniature diorama aesthetic, Octane Render, unreal engine 5 architecture visualization',
-      lighting: 'Warm golden hour sunlight streaming through floor-to-ceiling glass, soft global illumination',
-      camera: '45-degree isometric tilt-shift lens, crisp depth of field, 8k resolution',
+      subject: '3D isometric architectural cutaway floorplan of a modern luxury 3-bedroom condominium unit. Clearly defined open-concept marble kitchen island, warm oak living room with L-shaped sofa, landscaped balcony, and master suite with walk-in wardrobe, floating on a clean studio plinth',
+      style: 'High-precision architectural visualization, miniature diorama aesthetic, physically based rendering (PBR) materials, clean museum-grade presentation',
+      lighting: 'Warm golden hour sunlight streaming diagonally through the balcony glass, soft global illumination, gentle ambient occlusion shadows',
+      camera: 'True 45-degree isometric orthographic projection, tilt-shift miniature lens feel, f/8 edge-to-edge sharpness, 8k detail',
       ratio: '16:9',
-      negative: 'blurry text, warped walls, cluttered furniture, oversaturated neon, watermark'
+      negative: 'warped walls, non-parallel architectural lines, cluttered mess, unreadable gibberish text, oversaturated neon, watermarks'
     }
   },
   {
-    id: 't6',
+    id: 'img_nano_infographic',
     studio: 'image',
     category: 'image',
-    title: 'Cinematic Editorial Portrait',
-    description: 'Capture moody, high-end commercial fashion and corporate headshots with exquisite lighting.',
+    targetApp: 'nano_banana',
+    appBadge: 'Google Nano Banana',
+    title: 'Social Media Visual Card with Exact Text',
+    description: 'Leverages Nano Banana’s industry-leading typography rendering to create a clean visual poster with exact quoted headline text.',
     payload: {
-      subject: 'Close-up editorial portrait of a confident professional in smart casual attire',
-      style: 'High-end commercial photography, Fujifilm GFX 100 style, ultra-detailed skin texture',
-      lighting: 'Soft Rembrandt studio lighting with subtle rim light and warm amber glow',
-      camera: '85mm f/1.4 prime lens, shallow depth of field, cinematic color grading',
-      ratio: '9:16',
-      negative: 'deformed hands, extra fingers, cartoon, plastic skin, distorted eyes, watermark'
+      subject: 'Modern minimalist real estate wealth strategy poster featuring a sleek 3D glass bar chart ascending toward a luxury skyline. At the top center, display the exact bold headline text "5-YEAR MOP STRATEGY" in clean white geometric sans-serif typography',
+      style: 'Apple-inspired editorial fintech graphic design, frosted glassmorphism cards, brushed titanium and emerald accents',
+      lighting: 'Soft studio rim lighting with subtle emerald and indigo volumetric glow behind the glass chart',
+      camera: 'Straight-on front orthographic composition, ultra-sharp vector-level typography clarity',
+      ratio: '4:5',
+      negative: 'misspelled words, extra letters, blurry typography, cluttered background, crooked layout'
     }
   },
   {
-    id: 't7',
+    id: 'img_mj_editorial',
     studio: 'image',
     category: 'image',
-    title: 'Sleek Minimalist Product Mockup',
-    description: 'Display tech gadgets and luxury consumer goods against minimalist podium backgrounds.',
+    targetApp: 'midjourney',
+    appBadge: 'Midjourney v6.1 / v7',
+    title: 'Executive Brand Portrait',
+    description: 'Formatted with Midjourney optical descriptors and native --ar / --stylize / --no parameters.',
     payload: {
-      subject: 'Sleek matte black smart device resting on a travertine stone podium with floating mist',
-      style: 'Commercial product photography, minimalist studio setup, clean geometry',
-      lighting: 'Diffused overhead softbox lighting with crisp edge highlights',
-      camera: 'Macro lens 100mm, f/8 aperture, hyper-focused sharp details',
-      ratio: '1:1',
-      negative: 'scratches, dust spots, uneven lighting, reflections, low resolution'
+      subject: 'Editorial half-body portrait of an approachable modern Asian entrepreneur in a tailored navy smart-casual blazer standing in a sunlit architectural lounge',
+      style: 'High-end commercial magazine photography, shot on Hasselblad H6D-100c, natural skin micro-texture, timeless color palette',
+      lighting: 'Soft directional window key light with warm golden rim light and natural catchlights in the eyes',
+      camera: '85mm f/1.4 prime lens, creamy bokeh background separation, eye-level composition',
+      ratio: '4:5',
+      negative: 'plastic skin, airbrushed face, deformed fingers, asymmetrical eyes, cartoon, watermark'
+    }
+  },
+
+  // ==================== TEXT STUDIO TEMPLATES ====================
+  {
+    id: 'txt_viral_script',
+    studio: 'text',
+    category: 'text',
+    targetApp: 'universal_text',
+    appBadge: 'Universal LLM',
+    title: '60s Short-Form Property / Business Script',
+    description: 'Hook viewers in 3 seconds and explain complex financial or property concepts with zero jargon.',
+    payload: {
+      role: 'Viral Short-Form Video Producer & Financial Storyteller',
+      objective: 'Write a high-retention 60-second vertical video script (Reels/TikTok/Shorts) breaking down why waiting 5 years for MOP can build a stronger upgrade cushion.',
+      context: 'Target audience: Young couples and first-time homeowners in Singapore comparing BTO/EC vs resale options.',
+      tone: 'Warm, candid, data-backed, conversational peer-to-peer advice',
+      format: '1. Visual + Spoken Hook (0-4s) -> 2. Common Myth (4-15s) -> 3. Simple Math Breakdown (15-45s) -> 4. Low-Pressure Question CTA (45-60s)',
+      constraints: 'Keep spoken sentences under 12 words; include [Visual B-Roll Cues] in brackets; avoid pushy sales language; total spoken word count 135-150 words.'
     }
   },
   {
-    id: 't8',
-    studio: 'image',
-    category: 'image',
-    title: 'Futuristic Cyberpunk Skyline',
-    description: 'Render neon-lit nocturnal megacities with flying vehicles and atmospheric rain reflections.',
+    id: 'txt_claude_strategy',
+    studio: 'text',
+    category: 'text',
+    targetApp: 'claude',
+    appBadge: 'Anthropic Claude',
+    title: 'Client Objection & Decision Matrix',
+    description: 'Uses Claude XML structuring to build an empathetic, numbers-first client consultation guide.',
     payload: {
-      subject: 'Vast cyberpunk megacity intersection at night with glowing holographic billboards and flying cars',
-      style: 'Sci-fi concept art, Blade Runner aesthetic, highly intricate urban density',
-      lighting: 'Vibrant neon cyan and magenta glow reflecting on wet asphalt puddles',
-      camera: 'Wide-angle cinematic shot, 24mm anamorphic lens, dramatic perspective',
-      ratio: '16:9',
-      negative: 'daytime, quiet town, low detail, blurry haze, cartoon sketch'
-    }
-  },
-  {
-    id: 't9',
-    studio: 'video',
-    category: 'video',
-    title: 'Cinematic FPV Drone Reveal',
-    description: 'Smooth, breathtaking aerial fly-throughs over luxury developments and scenic landscapes.',
-    payload: {
-      scene: 'Aerial FPV drone glide swooping past lush vertical sky gardens toward an infinity pool at dusk',
-      cameraMotion: 'Seamless high-speed forward push-in with smooth banking curve',
-      pacing: 'Fluid cinematic slow-motion (60fps optical flow)',
-      atmosphere: 'Warm twilight amber interior glow contrasting with deep sapphire evening sky',
-      audio: 'Subtle ambient breeze, gentle water ripples, warm minimalist piano swell',
-      specs: '16:9, 5 seconds, 24fps cinematic shutter'
-    }
-  },
-  {
-    id: 't10',
-    studio: 'video',
-    category: 'video',
-    title: 'Slow-Motion Macro Product Orbit',
-    description: 'Smooth 360-degree orbital camera rotation highlighting intricate product craftsmanship.',
-    payload: {
-      scene: 'Smooth 360-degree orbital rotation around a luxury mechanical watch showcasing spinning gears',
-      cameraMotion: 'Steady circular dolly tracking shot at constant speed',
-      pacing: 'Smooth buttery 60fps macro motion',
-      atmosphere: 'Moody dark studio ambient light with polished metallic reflections',
-      audio: 'Subtle mechanical ticking, smooth bass drone swell',
-      specs: '9:16 vertical, 5 seconds, high dynamic range'
-    }
-  },
-  {
-    id: 't11',
-    studio: 'i2v',
-    category: 'i2v',
-    title: 'Billowing Curtains & Sunlight Shift',
-    description: 'Animate static interior photos with gentle wind movement and natural lighting transitions.',
-    payload: {
-      anchor: 'High-resolution interior showroom photo of an open-concept living room and balcony',
-      subjectMotion: 'Sheer white curtains gently billowing in a soft breeze; sunlight slowly shifting across the marble floor',
-      bgMotion: 'Clouds moving slowly across the city skyline outside the window',
-      cameraPath: 'Slow, steady dolly push-in along the room axis',
-      consistency: 'Strict structural lock on walls, cabinetry, and furniture geometry (Motion Bucket 40)'
-    }
-  },
-  {
-    id: 't12',
-    studio: 'i2v',
-    category: 'i2v',
-    title: 'Cinematic Water Ripple & Steam',
-    description: 'Bring dining tables and nature photography to life with subtle fluid and atmospheric motion.',
-    payload: {
-      anchor: 'Close-up photo of a steaming ceramic coffee cup resting on a wooden table beside a serene pond',
-      subjectMotion: 'Delicate aromatic steam rising steadily from the hot coffee cup',
-      bgMotion: 'Gentle concentric water ripples expanding softly across the pond surface',
-      cameraPath: 'Static locked tripod frame with zero camera shake',
-      consistency: 'High fidelity preservation of cup and tabletop textures (Motion Bucket 30)'
+      role: 'Senior Wealth & Asset Progression Advisor',
+      objective: 'Create a structured client consultation guide addressing the top 4 hesitations upgraders face during high-interest or high-price market cycles.',
+      context: 'Used during 1-on-1 discovery calls with cautious family upgraders.',
+      tone: 'Empathetic, analytical, transparent, zero-pressure',
+      format: 'Markdown Table (Objection | Root Fear | Empathetic Reframe | Prudent Stress-Test Question)',
+      constraints: 'Never promise guaranteed capital appreciation; emphasize holding power, reserve buffers, and realistic downside protection.'
     }
   }
 ];
@@ -184,27 +217,24 @@ function renderTemplatesGrid(category = 'all') {
   if (!grid) return;
   grid.innerHTML = '';
 
-  const filtered = category === 'all' 
-    ? window.starterTemplates 
+  const filtered = category === 'all'
+    ? window.starterTemplates
     : window.starterTemplates.filter(t => t.category === category);
 
-  // Update category tab styles
   ['all', 'text', 'image', 'video', 'i2v'].forEach(cat => {
     const btn = document.getElementById(`btn-cat-${cat}`);
     if (btn) {
-      if (cat === category) {
-        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 text-white transition shrink-0';
-      } else {
-        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0';
-      }
+      btn.className = cat === category
+        ? 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition shrink-0'
+        : 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0';
     }
   });
 
   filtered.forEach(t => {
     const card = document.createElement('div');
-    card.className = 'p-4 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-indigo-500/50 transition flex flex-col justify-between space-y-3 group';
-    
-    const badgeColor = {
+    card.className = 'p-4 rounded-xl bg-slate-950/90 border border-slate-800 hover:border-indigo-500/60 transition flex flex-col justify-between space-y-3 group';
+
+    const studioBadgeColor = {
       text: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
       image: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
       video: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
@@ -212,17 +242,20 @@ function renderTemplatesGrid(category = 'all') {
     }[t.studio] || 'bg-slate-800 text-slate-300';
 
     card.innerHTML = `
-      <div class="space-y-1.5">
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${badgeColor}">${t.studio.toUpperCase()}</span>
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 transition"></i>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${studioBadgeColor}">${t.studio.toUpperCase()}</span>
+          <span class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 flex items-center gap-1">
+            <i data-lucide="cpu" class="w-3 h-3"></i>
+            ${t.appBadge}
+          </span>
         </div>
-        <h4 class="font-semibold text-sm text-white">${t.title}</h4>
+        <h4 class="font-bold text-sm text-white group-hover:text-indigo-300 transition">${t.title}</h4>
         <p class="text-xs text-slate-400 leading-relaxed">${t.description}</p>
       </div>
       <button onclick="loadTemplate('${t.id}')" class="w-full py-2 px-3 rounded-lg bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
-        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-        <span>Load Template</span>
+        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+        <span>Load Platform-Optimized Template</span>
       </button>
     `;
     grid.appendChild(card);
@@ -240,10 +273,12 @@ function loadTemplate(id) {
   if (!template) return;
 
   window.appState.activeStudio = template.studio;
+  if (template.targetApp) {
+    window.appState.targetApps[template.studio] = template.targetApp;
+  }
   window.appState.studios[template.studio] = { ...template.payload };
   window.appState.detectiveFixes = [];
 
-  // Update sidebar active button
   document.querySelectorAll('.studio-btn').forEach(btn => {
     if (btn.dataset.studio === template.studio) {
       btn.className = 'studio-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition bg-indigo-600/20 text-indigo-300 border border-indigo-500/40';

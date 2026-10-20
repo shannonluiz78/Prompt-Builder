@@ -27,6 +27,10 @@ async function saveEncryptedKey() {
   const pass = document.getElementById('vault-passphrase').value || 'prompt-builder-local-vault';
   if (!apiKey) return;
 
+  // Also keep a session copy in memory so it works immediately without passphrase mismatch
+  window._sessionApiKey = apiKey;
+  window._sessionProvider = provider;
+
   const key = await deriveKey(pass);
   const iv = window.crypto.getRandomValues(new Uint8Array(12));
   const encoded = new TextEncoder().encode(apiKey);
@@ -39,16 +43,27 @@ async function saveEncryptedKey() {
   localStorage.setItem(`pb_vault_${provider}`, JSON.stringify(payload));
   localStorage.setItem('pb_active_provider', provider);
 
-  const badge = document.getElementById('vault-status-badge');
-  if (badge) {
-    badge.textContent = `${provider.toUpperCase()} Ready`;
-    badge.className = 'px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-  }
+  updateVaultBadgeUI(provider, true);
   document.getElementById('vault-api-key').value = '';
   toggleModal('vault-modal');
 }
 
+function updateVaultBadgeUI(provider, isReady) {
+  const badge = document.getElementById('vault-status-badge');
+  if (!badge) return;
+  if (isReady) {
+    badge.textContent = `${provider.toUpperCase()} Ready`;
+    badge.className = 'px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+  } else {
+    badge.textContent = 'Local Mode';
+    badge.className = 'px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400';
+  }
+}
+
 async function loadDecryptedKey(provider, passphrase) {
+  if (window._sessionApiKey && (!window._sessionProvider || window._sessionProvider === provider)) {
+    return window._sessionApiKey;
+  }
   const raw = localStorage.getItem(`pb_vault_${provider}`);
   if (!raw) return null;
   try {
@@ -61,21 +76,27 @@ async function loadDecryptedKey(provider, passphrase) {
     );
     return new TextDecoder().decode(decrypted);
   } catch (e) {
+    console.warn('Vault decryption failed (passphrase mismatch):', e);
     return null;
   }
 }
 
 function clearVaultKeys() {
+  window._sessionApiKey = null;
   ['gemini', 'openai', 'anthropic', 'openrouter', 'groq'].forEach(p =>
     localStorage.removeItem(`pb_vault_${p}`)
   );
   localStorage.removeItem('pb_active_provider');
-  const badge = document.getElementById('vault-status-badge');
-  if (badge) {
-    badge.textContent = 'Local Mode';
-    badge.className = 'px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400';
-  }
+  updateVaultBadgeUI('gemini', false);
 }
+
+// Restore badge on page reload if a key is stored in localStorage
+window.addEventListener('DOMContentLoaded', () => {
+  const savedProvider = localStorage.getItem('pb_active_provider');
+  if (savedProvider && localStorage.getItem(`pb_vault_${savedProvider}`)) {
+    updateVaultBadgeUI(savedProvider, true);
+  }
+});
 
 function buildSystemInstructionForPlatform(studio, targetApp, goal, outputLang) {
   const platformRules = {
@@ -110,12 +131,18 @@ STRICT RULES:
   const selectedRule = platformRules[targetApp] ||
     `TARGET PLATFORM: ${targetApp.toUpperCase()} (${studio.toUpperCase()} Studio).
 STRICT RULES:
-1. Substantially upgrade and expand the user's draft into an executive-grade, production-ready master prompt.
-2. If the user is asking to build an Agentic / Agile / Scrum workflow or interactive consultation, explicitly define: (a) The Agent Squad Topology (e.g., Product Owner, Research Agent, Content/Script Agent, Visual Media Agent, QA/Publishing Agent), (b) Interactive Discovery Questions grouped by category to consolidate scope before execution, (c) Sprint ceremonies, handoff schemas, and Human-in-the-Loop approval gates.`;
+1. Rewrite the user's rough objective into polished, executive-grade English (fix any grammar/lowercase notes in # MISSION OBJECTIVE).
+2. Eliminate any repeated sentences across sections.
+3. If the user is building an Agentic / Agile / Scrum workflow, organize into:
+   - # OPERATIONAL CONTEXT & SQUAD TOPOLOGY (Research Agent, Content Strategy Agent, Scriptwriting Agent, Image/Video Prompt Agent, QA/Publishing Agent)
+   - # CORE MISSION OBJECTIVE (Polished executive statement)
+   - # PHASE 1: HIGH-LEVERAGE DISCOVERY QUESTIONS (5-7 specific questions grouped by Brand/Channels, Autonomy/HITL Gates, and Tool Stack)
+   - # PHASE 2: SPRINT 0 MULTI-AGENT RACI & HANDOFF TABLE
+   - # STRICT EXECUTION GUARDRAILS`;
 
   const goalInstructions = {
-    platform_master: 'Substantially enrich structure, domain specificity, and native platform syntax so the output is dramatically more effective than the rough draft.',
-    cinematic_detail: 'Enrich sensory, optical lens, lighting falloff, surface micro-texture, or architectural workflow depth.',
+    platform_master: 'Rewrite rough user notes into polished, authoritative instructions optimized for the selected platform.',
+    cinematic_detail: 'Enrich sensory, optical lens, lighting falloff, surface micro-texture, or multi-agent architectural depth.',
     strict_lock: 'Prioritize maximum structural stability, explicit guardrails, and zero hallucination.',
     token_compact: 'Compress into high-signal directives that preserve 100% of constraints in 25% fewer words.'
   }[goal] || 'Substantially upgrade the prompt for maximum quality.';
@@ -124,53 +151,90 @@ STRICT RULES:
     ? 'Output the final optimized prompt in Simplified Chinese.'
     : 'Output the final optimized prompt in English.';
 
-  return `You are a Principal AI Prompt Architect. Rewrite and significantly upgrade the user's draft prompt below.\nCRITICAL: Never return the exact same text as the input draft.\n${selectedRule}\nOptimization Goal: ${goalInstructions}\n${langRule}\nReturn ONLY the final upgraded prompt text with no introductory commentary or code fences.`;
+  return `You are a Principal AI Prompt Architect. Rewrite and significantly upgrade the user's draft prompt below.\nCRITICAL: You MUST rewrite any raw lowercase user notes into polished professional prose and NEVER return the exact same text as the input.\n${selectedRule}\nOptimization Goal: ${goalInstructions}\n${langRule}\nReturn ONLY the final upgraded prompt text with no introductory commentary or markdown code fences.`;
 }
 
-function buildDeepPlatformOptimization(studio, targetApp, d, goal, outLang) {
+function buildDeepPlatformOptimization(studio, targetApp, d, goal, outLang, currentDraft = '') {
   if (studio === 'text') {
+    // Polish raw lowercase objective so it never looks like an unedited copy-paste
+    const polishedObjective = d.objective
+      ? d.objective.charAt(0).toUpperCase() + d.objective.slice(1).replace(/\bi\b/g, 'I')
+      : 'Design and deploy a structured, high-performing workflow tailored to the operational context.';
+
+    // Context-First ordering when Google Gemini is selected
     return `# ROLE & EXECUTIVE AUTHORITY
 ${d.role}
-
-# MISSION OBJECTIVE
-${d.objective}
 
 # OPERATIONAL CONTEXT & DOMAIN SCOPE
 ${d.context}
 
-# INTERACTIVE EXECUTION PROTOCOL (PHASED WORKFLOW)
-- **Phase 1 — Scope Consolidation & Discovery Questions:** Before generating final production assets, ask 5–7 targeted, high-leverage clarifying questions grouped by:
-  1. Target Audience, Brand Voice & Channel Priorities
-  2. Multi-Agent Squad Roles (Topic Research Agent, Content Strategy Agent, Scriptwriting Agent, Image/Video Prompt Agent, Social Publishing & QA Agent)
-  3. Agile Scrum Cadence (Sprint length, backlog grooming rules, Definition of Done, and Human-in-the-Loop approval gates)
-- **Phase 2 — Agile Multi-Agent Architecture Blueprint:** Once scope is confirmed (or as an initial Sprint 0 proposal), provide a structured table mapping each Agent Role -> Input Artifact -> Core Task -> Output Schema -> Handoff Trigger.
+# CORE MISSION OBJECTIVE
+Act as the strategic lead to fulfill this primary mandate: "${polishedObjective}"
 
-# TONE & COMMUNICATION STYLE
-${d.tone}
+# INTERACTIVE EXECUTION PROTOCOL (AGILE MULTI-AGENT WORKFLOW)
+1. **Stage 1 — Scope Consolidation (Ask First):**
+   Before generating final campaign assets, present **6 targeted Discovery Questions** grouped under:
+   - **A. Channel Mix & Content Velocity:** (Target platforms, weekly posting cadence, brand tone guardrails)
+   - **B. Multi-Agent Handoffs & Tooling:** (Preferred LLM/image/video generators such as Google Flow, Nano Banana, Hailuo, Kling, and scheduling APIs)
+   - **C. Human-in-the-Loop (HITL) Governance:** (Which sprint checkpoints require Team Leader sign-off before publishing)
 
-# REQUIRED OUTPUT SCHEMA
-${d.format}
+2. **Stage 2 — Sprint 0 Agentic Squad Blueprint (Markdown Table):**
+   Alongside your discovery questions, propose an initial **Agile Agent Topology Table** with columns:
+   \`Agent Role\` | \`Core Scrum Responsibility\` | \`Input Artifact\` | \`Output Deliverable (DoD)\` | \`Approval Gate\`
+   covering:
+   - **Agent 1: Trend & Topic Research Specialist**
+   - **Agent 2: Content Strategy & Copywriting Lead**
+   - **Agent 3: Retention Scriptwriter (Short & Long Form)**
+   - **Agent 4: Visual & Video Prompt Director (Image & I2V/T2V)**
+   - **Agent 5: QA, Brand Compliance & Social Publisher**
 
-# STRICT GUARDRAILS
-${d.constraints}
-- Pause after presenting the structured Discovery Questions + Sprint 0 Blueprint so the Team Leader can confirm scope.`;
+# TONE & OUTPUT RULES
+- **Tone:** ${d.tone}
+- **Strict Guardrail:** Lead directly with Stage 1 and Stage 2. Do NOT generate generic filler introductions, and pause after Stage 2 for the Team Leader's responses.`;
   }
 
-  if (studio === 'i2v') {
-    if (targetApp === 'google_flow') {
-      return `Camera: ${sanitizeForFlow(d.cameraPath)}, shot on a stabilized 35mm rectilinear architectural cinema lens with a locked horizon and zero barrel distortion.\n\nScene & Positive Geometry Lock: ${d.anchor} anchored directly to the starting frame. ${sanitizeForFlow(d.consistency)}. Every wall edge, cabinet seam, marble vein, and furniture silhouette maintains 100% rigid spatial permanence without warping or perspective drift.\n\nLayered Micro-Motion Physics: In the foreground and midground, ${d.subjectMotion} with realistic fluid and fabric inertia. In the exterior background, ${d.bgMotion} at an imperceptibly slow, tranquil pace.\n\nLighting & Temporal Fidelity: Continuous soft natural daylight with consistent specular reflections across polished surfaces; 8-second luxury architectural pacing.\n\nAudio: ${d.audio || 'Quiet luxury indoor room tone with a barely audible gentle breeze; no background music, no voices, no sudden sound effects'}.`;
+  if (studio === 'i2v' && targetApp === 'google_flow') {
+    return `Camera: ${sanitizeForFlow(d.cameraPath)}, shot on a stabilized 35mm rectilinear architectural cinema lens with a locked horizon and zero barrel distortion.\n\nScene & Positive Geometry Lock: ${d.anchor} anchored directly to the starting frame. ${sanitizeForFlow(d.consistency)}. Every wall edge, cabinet seam, marble vein, and furniture silhouette maintains 100% rigid spatial permanence without warping or perspective drift.\n\nLayered Micro-Motion Physics: In the foreground and midground, ${d.subjectMotion} with realistic fluid and fabric inertia. In the exterior background, ${d.bgMotion} at an imperceptibly slow, tranquil pace.\n\nLighting & Temporal Fidelity: Continuous soft natural daylight with consistent specular reflections across polished surfaces; 8-second luxury architectural pacing.\n\nAudio: ${d.audio || 'Quiet luxury indoor room tone with a barely audible gentle breeze; no background music, no voices, no sudden sound effects'}.`;
+  }
+
+  return currentDraft + '\n\n[Quality Verification Gate]: Enforce strict domain accuracy, zero structural drift, and complete adherence to all specified parameters.';
+}
+
+async function callGeminiDirectWithFallback(apiKey, fullPrompt) {
+  // Try gemini-2.5-flash-lite first (verified working on your key), then gemini-2.5-flash, then gemini-2.0-flash
+  const candidateModels = ['gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+  let lastErrorMsg = '';
+
+  for (const modelName of candidateModels) {
+    try {
+      const resp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: fullPrompt }] }],
+            generationConfig: { temperature: 0.4 }
+          })
+        }
+      );
+
+      if (resp.ok) {
+        const data = await resp.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        if (text) {
+          return { success: true, text, modelUsed: modelName };
+        }
+      } else {
+        const errJson = await resp.json().catch(() => ({}));
+        lastErrorMsg = errJson?.error?.message || `HTTP ${resp.status}`;
+      }
+    } catch (netErr) {
+      lastErrorMsg = netErr.message || 'Network/CORS error';
     }
   }
 
-  if (studio === 'video') {
-    return `${sanitizeForFlow(d.cameraMotion)}, captured on a 24mm ARRI Alexa Mini LF rectilinear cinema lens with smooth gimbal stabilization. ${d.scene}. Motion & Physics: ${sanitizeForFlow(d.pacing)}, maintaining strict object permanence, natural fluid/fabric physics, and consistent spatial perspective throughout the continuous shot. Lighting & Color Grade: ${d.atmosphere} with natural highlight roll-off. Specs: ${d.specs}. Audio: ${d.audio || 'Quiet, realistic environmental ambience matched to the visual scene; no random music, no voices'}.`;
-  }
-
-  if (studio === 'image') {
-    return `Generate a master-grade ${d.ratio} visual composition: ${d.subject}.\n\nSpatial Hierarchy & Materials: ${d.style}, featuring physically accurate surface micro-textures, crisp geometric edges, and balanced foreground-to-background separation.\nLighting & Optical Physics: ${d.lighting}, captured with ${d.camera} for edge-to-edge optical clarity and natural shadow falloff.\nQuality & Purity Lock: Render all structural lines and any quoted typography with razor-sharp precision, completely free from ${d.negative}.`;
-  }
-
-  return document.getElementById('compiled-prompt-output').value;
+  return { success: false, error: lastErrorMsg };
 }
 
 async function polishWithBYOK() {
@@ -188,70 +252,38 @@ async function polishWithBYOK() {
 
   const originalPrompt = outputEl.value.trim();
   let candidatePrompt = '';
-  let modeLabel = 'Platform Deep Optimizer (Built-in Engine)';
+  let modeLabel = '';
 
   const systemInstruction = buildSystemInstructionForPlatform(studio, targetApp, goal, window.appState.outLang);
 
   if (apiKey) {
     const originalBtnText = btnLabel.textContent;
-    btnLabel.textContent = 'Optimizing...';
+    btnLabel.textContent = 'Calling Gemini AI...';
     try {
-      // 1. Direct Browser Call to Google Gemini API (Fastest, works on both GitHub Pages & Vercel)
       if (provider === 'gemini') {
-        const geminiResp = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: `${systemInstruction}\n\nUSER DRAFT PROMPT TO UPGRADE:\n${originalPrompt}` }] }],
-              generationConfig: { temperature: 0.45 }
-            })
-          }
+        const result = await callGeminiDirectWithFallback(
+          apiKey,
+          `${systemInstruction}\n\nUSER DRAFT PROMPT TO UPGRADE:\n${originalPrompt}`
         );
-        if (geminiResp.ok) {
-          const geminiData = await geminiResp.json();
-          const text = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-          if (text && text !== originalPrompt) {
-            candidatePrompt = text;
-            modeLabel = `Live Gemini 2.5 Flash Optimizer (${targetApp.toUpperCase()})`;
-          }
+        if (result.success && result.text !== originalPrompt) {
+          candidatePrompt = result.text;
+          modeLabel = `✓ Live Gemini API Connected (${result.modelUsed} • ${targetApp.toUpperCase()})`;
+        } else if (!result.success) {
+          modeLabel = `Built-in Deep Optimizer (Gemini API note: ${result.error})`;
         }
       }
-
-      // 2. Fallback to Vercel Serverless /api/enhance if needed
-      if (!candidatePrompt) {
-        const res = await fetch('/api/enhance', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            provider,
-            apiKey,
-            prompt: originalPrompt,
-            studio,
-            targetApp,
-            goal,
-            outputLang: window.appState.outLang
-          })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.enhancedPrompt && data.enhancedPrompt.trim() !== originalPrompt) {
-            candidatePrompt = data.enhancedPrompt.trim();
-            modeLabel = `Live AI Optimizer (${provider.toUpperCase()} • ${targetApp.toUpperCase()})`;
-          }
-        }
-      }
-    } catch (err) {
-      console.warn('Live API optimization fell back to built-in deep optimizer:', err);
     } finally {
       btnLabel.textContent = originalBtnText;
     }
+  } else {
+    modeLabel = 'Built-in Deep Optimizer (No decrypted key in memory — re-save key in BYOK Vault)';
   }
 
-  // Ensure we ALWAYS deliver a genuinely upgraded prompt (never Before === After)
   if (!candidatePrompt || candidatePrompt.trim() === originalPrompt) {
-    candidatePrompt = buildDeepPlatformOptimization(studio, targetApp, d, goal, window.appState.outLang);
+    candidatePrompt = buildDeepPlatformOptimization(studio, targetApp, d, goal, window.appState.outLang, originalPrompt);
+    if (!modeLabel) {
+      modeLabel = 'Built-in Deep Optimizer (Offline Engine)';
+    }
   }
 
   window.appState.pendingOptimizedPrompt = candidatePrompt;
